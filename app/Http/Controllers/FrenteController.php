@@ -59,7 +59,7 @@ class FrenteController extends Controller
 
     public function destroy($id)
     {
-        $frente = Frente::find($id);
+        $frente = Frente::where('ARCHIVADO',false)->find($id);
 
         if(!$frente)
         {
