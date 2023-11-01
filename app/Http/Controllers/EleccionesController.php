@@ -5,6 +5,11 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Elecciones;
 use App\Models\Eleccion;
+
+use App\Models\EleccionesFacCarr;
+use App\Models\Facultad;
+use App\Models\Carrera;
+
 use Illuminate\Support\Facades\DB;
 
 
@@ -19,19 +24,85 @@ class EleccionesController extends Controller
     public function store(Request $request)
     {
         $numeroAleatorio = rand(1, 500);
-        $eleccion = new Elecciones();
-        $eleccion->COD_ADMIN = $request->COD_ADMIN;
-        $eleccion->COD_FRENTE = $request->COD_FRENTE;
-        $eleccion->COD_TEU = $request->COD_TEU;
-        $eleccion->COD_COMITE = $numeroAleatorio;
-        $eleccion->MOTIVO_ELECCION = $request->MOTIVO_ELECCION;
-        $eleccion->FECHA_ELECCION = $request->FECHA_ELECCION;
-        $eleccion->FECHA_INI_CONVOCATORIA = $request->FECHA_INI_CONVOCATORIA;
-        $eleccion->FECHA_FIN_CONVOCATORIA = $request->FECHA_FIN_CONVOCATORIA;
-        $eleccion->ELECCION_ACTIVA = $request->ELECCION_ACTIVA;
-        $eleccion->save();
 
-       
+
+        $cod_admin = $request->input('COD_ADMIN');
+        $cod_frente = $request->input('COD_FRENTE');
+        $cod_teu = $request->input('COD_TEU');
+        $motivo_eleccion = $request->input('MOTIVO_ELECCION');
+        $fecha_eleccion = $request->input('FECHA_ELECCION');
+        $fecha_ini_convocatoria = $request->input('FECHA_INI_CONVOCATORIA');
+        $fecha_fin_convocatoria = $request->input('FECHA_FIN_CONVOCATORIA');
+        $eleccion_activa = $request->input('ELECCION_ACTIVA');
+        $tipo_eleccion = $request->input('TIPO_ELECCION');
+        $cod_facultad = $request->input('cod_facultad');
+        $cod_carrera = $request->input('cod_carrera');
+        
+        $cod_facultad = $request->input('cod_facultad');
+        $cod_carrera = $request->input('cod_carrera');
+    
+        $eleccion = new Elecciones();
+        $eleccion->cod_admin = $cod_admin;
+        $eleccion->cod_frente = $cod_frente;
+        $eleccion->cod_teu = $cod_teu;
+        $eleccion->cod_comite = rand(1, 500); // Genera el código de comité
+        $eleccion->motivo_eleccion = $motivo_eleccion;
+        $eleccion->fecha_eleccion = $fecha_eleccion;
+        $eleccion->fecha_ini_convocatoria = $fecha_ini_convocatoria;
+        $eleccion->fecha_fin_convocatoria = $fecha_fin_convocatoria;
+        $eleccion->eleccion_activa = $eleccion_activa;
+        $eleccion->save();
+        $cod_eleccion = $eleccion->getKey(); 
+
+    
+        if ($motivo_eleccion === 'universitaria') {
+            // Obtener todas las facultades y sus carreras
+            $facultadesYCarreras = DB::table('facultad')
+                ->join('Carrera', 'Facultad.COD_FACULTAD', '=', 'Carrera.COD_FACULTAD')
+                ->select('Facultad.COD_FACULTAD as cod_facultad', 'Carrera.COD_CARRERA as cod_carrera')
+                ->get();
+    
+            // Insertar en la tabla EleccionesFacCarr
+            foreach ($facultadesYCarreras as $row) {
+                DB::table('elecciones_fac_carr')->insert([
+                    'COD_ELECCION' => $cod_eleccion, // Utiliza el ID de la elección que acabas de crear
+                    'COD_FACULTAD' => $row->cod_facultad,
+                    'COD_CARRERA' => $row->cod_carrera,
+                ]);
+            }
+        }elseif ($motivo_eleccion === 'facultativa') {
+            // Obtener las carreras de una facultad específica
+            $carrerasFacultad = DB::table('Carrera')
+                ->where('COD_FACULTAD', $cod_facultad)
+                ->select('COD_CARRERA as cod_carrera')
+                ->get();
+    
+            // Insertar en la tabla EleccionesFacCarr
+            foreach ($carrerasFacultad as $row) {
+                DB::table('Elecciones_Fac_Carr')->insert([
+                    'COD_ELECCION' => $cod_eleccion, // Utiliza el ID de la elección que acabas de crear
+                    'COD_FACULTAD' => $cod_facultad,
+                    'COD_CARRERA' => $row->cod_carrera,
+                ]);
+            }
+        } elseif ($motivo_eleccion === 'carrera') {
+            // Insertar en la tabla EleccionesFacCarr solo para una carrera específica
+            DB::table('Elecciones_Fac_Carr')->insert([
+                'COD_ELECCION' => $cod_eleccion, // Utiliza el ID de la elección que acabas de crear
+                'COD_FACULTAD' => $cod_facultad,
+                'COD_CARRERA' => $cod_carrera,
+            ]);
+        }
+        elseif  ($motivo_eleccion === 'universitaria2') {
+            $eleccion_fac_carr = new EleccionesFacCarr();
+            $eleccion_fac_carr->cod_eleccion = $cod_eleccion;
+            $eleccion_fac_carr->cod_facultad = $cod_facultad;
+            $eleccion_fac_carr->cod_carrera = $cod_carrera;
+            $eleccion_fac_carr->save();
+         
+        }
+        
+      
 
 // Convertir el número a un valor de tipo char
       //  $numeroChar = $request->COD_ELECCION+$numeroAleatorio;

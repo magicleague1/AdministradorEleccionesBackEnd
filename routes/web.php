@@ -6,6 +6,13 @@ use App\Http\Controllers\AdministradorController;
 use App\Http\Controllers\EleccionController;
 use App\Http\Controllers\PoblacionController;
 
+use App\Http\Controllers\FacultadController;
+use App\Http\Controllers\CarreraController;
+
+use App\Http\Controllers\EleccionesFacCarrController;
+use App\Http\Controllers\MesasController;
+
+
 
 
 /*
@@ -61,3 +68,41 @@ Route::post('/eleccionesStore', [EleccionController::class, 'store']);
 
 
 Route::get('/poblacionindex', [PoblacionController::class, 'index']);
+
+
+//eleciones
+
+
+Route::get('/facultades', [FacultadController::class, 'index']);
+
+
+
+Route::get('/carreras', [CarreraController::class, 'index']);
+
+
+Route::get('/carreras/{cod_facultad}', [CarreraController::class, 'getCarrerasByFacultad']);
+
+
+
+Route::post('/elecciones_fac_carr', [EleccionesFacCarrController::class, 'store']);
+
+
+Route::post('/asignar_mesas_carrera/{cod_eleccion}', [MesasController::class, 'asignarMesasPorCarrera']);
+
+
+
+Route::get('/mesas_asignadas', [MesasController::class, 'listarMesasAsignadas']);
+
+
+
+Route::get('/mesas_asignadas2', [MesasController::class, 'listarMesasAsignadas2']);
+
+
+
+
+Route::post('/agregar_nueva_mesa', [MesasController::class, 'agregarNuevaMesa']);
+
+
+
+
+Route::get('/facultades_por_eleccion/{codEleccion}', [FacultadController::class, 'obtenerFacultadesPorEleccion']);
