@@ -12,7 +12,10 @@ use App\Http\Controllers\CarreraController;
 use App\Http\Controllers\EleccionesFacCarrController;
 use App\Http\Controllers\MesasController;
 
+use App\Http\Controllers\PoblacionFacuCarrController;
+use App\Http\Controllers\ConvocatoriaEleccionesController;
 
+use App\Http\Controllers\PublicarConvocatoriaController;
 
 
 /*
@@ -41,6 +44,7 @@ Route::post('/crearProcesoElectoral',[App\Http\Controllers\ProcesoElectoralContr
 
 
 Route::post('/asignar-vocales/{COD_COMITE}', [App\Http\Controllers\PoblacionController::class, 'asignarVocales']);
+//Route::get('/asignar-vocales/{COD_COMITE}/{COD_ELECCION}', [App\Http\Controllers\PoblacionController::class, 'asignarVocales']);
 
 Route::get('/elecciones', [App\Http\Controllers\EleccionController::class, 'index']);
 
@@ -106,3 +110,50 @@ Route::post('/agregar_nueva_mesa', [MesasController::class, 'agregarNuevaMesa'])
 
 
 Route::get('/facultades_por_eleccion/{codEleccion}', [FacultadController::class, 'obtenerFacultadesPorEleccion']);
+
+
+//contadores
+
+// Ruta para contar la cantidad total de alumnos en una facultad
+Route::get('/contar_alumnos_facultad/{codFacultad}', [PoblacionFacuCarrController::class, 'contarAlumnosPorFacultad']);
+
+// Ruta para contar la cantidad de alumnos por carrera en una facultad
+Route::get('/contar_alumnos_carrera/{codFacultad}/{codCarrera}', [PoblacionFacuCarrController::class, 'contarAlumnosPorCarrera']);
+
+
+//cantidades
+
+Route::get('/cantidad/{facultad_id}', [PoblacionFacuCarrController::class, 'obtenerCantidadPorFacultad']);
+
+//convocatoria
+
+
+
+Route::get('/convocatorias', [ConvocatoriaEleccionesController::class, 'index']);
+Route::post('/convocatorias_crear', [ConvocatoriaEleccionesController::class, 'store']);
+Route::get('/convocatorias/{id}', [ConvocatoriaEleccionesController::class, 'show']);
+Route::get('/convocatorias2/{id}', [ConvocatoriaEleccionesController::class, 'show2']);
+
+Route::put('/convocatorias/{id}', [ConvocatoriaEleccionesController::class, 'update']);
+Route::delete('/convocatorias/{id}', [ConvocatoriaEleccionesController::class, 'destroy']);
+
+Route::get('/obtener_id_convocatoria/{idEleccion}', [ConvocatoriaEleccionesController::class, 'obtenerIdConvocatoria']);
+
+
+
+Route::get('/generar_pdf/{id}', [ConvocatoriaEleccionesController::class, 'generarPDF']);
+Route::get('/generar_pdf_publicado/{id}', [ConvocatoriaEleccionesController::class, 'generarPDF_Publicado']);
+Route::get('/generar_pdf2/{id}', [ConvocatoriaEleccionesController::class, 'generarPDF2']);
+
+
+
+
+Route::get('/publicar_convocatorias', [PublicarConvocatoriaController::class, 'index']);
+Route::post('/publicar_convocatorias_crear', [PublicarConvocatoriaController::class, 'store']);
+Route::get('/publicar_convocatorias/{id}', [PublicarConvocatoriaController::class, 'show']);
+Route::put('/publicar_convocatorias/{id}', [PublicarConvocatoriaController::class, 'update']);
+Route::delete('/publicar_convocatorias/{id}', [PublicarConvocatoriaController::class, 'destroy']);
+
+
+
+Route::get('/publicar_convocatoria_lista', [PublicarConvocatoriaController::class, 'listaPublicarConvocatoria']);

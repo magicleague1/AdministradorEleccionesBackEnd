@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Mesas;
+use App\Models\PoblacionFacuCarr;
 use App\Models\EleccionesFacCarr;
 use App\Models\Elecciones;
+
 
 use Illuminate\Support\Facades\DB;
 
@@ -24,9 +26,52 @@ class MesasController extends Controller
         return response()->json($mesa, 201);
     }
 
-
-
+   
+    //funciona para eleccion tipo facultad
     public function asignarMesasPorCarrera($cod_eleccion)
+    {
+        $carreras = EleccionesFacCarr::where('COD_ELECCION', $cod_eleccion)->get();
+    
+      
+     
+       
+              foreach ($carreras as $carrera) {
+                
+                $cod_carrera = $carrera->COD_CARRERA;
+                $cod_facultad = $carrera->COD_FACULTAD;
+                $alumnosPorCarrera = PoblacionFacuCarr::where('cod_facultad', $cod_facultad)
+                ->where('cod_carrera', $cod_carrera)
+                ->count();
+
+                $capacidadMesa = 50;
+                $mesasAsignadas = ceil($alumnosPorCarrera / $capacidadMesa);
+
+                for ($i = 1; $i <= $mesasAsignadas; $i++) {
+                    $mesa = new Mesas();
+                    $mesa->COD_ELECCION = $cod_eleccion;
+                    $mesa->COD_FACULTAD = $cod_facultad;
+                    $mesa->COD_CARRERA = $cod_carrera;
+                    $mesa->NUM_MESA = $i;
+                    $mesa->CANT_EST_MESA = 0; // Asignar la cantidad de estudiantes inicial, si es necesario
+                    $mesa->save();
+                }
+
+                //return response()->json(['car----------------' => $carreras]);
+     
+               
+   //return response()->json(['alumnos_carrera' => $mesasAsignadas]);
+            
+        }
+    
+          
+    
+        return response()->json(['message' => 'No se encontró la carrera para la elección proporcionada']);
+    
+    }
+
+
+
+    public function asignarMesasPorCarrera3($cod_eleccion)
     {
         // Obtener las carreras para la elección especificada
         $carreras = EleccionesFacCarr::where('COD_ELECCION', $cod_eleccion)->get();
