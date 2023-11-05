@@ -23,9 +23,7 @@ class EleccionesController extends Controller
    
     public function store(Request $request)
     {
-        $numeroAleatorio = rand(1, 500);
-
-
+      
         $cod_admin = $request->input('COD_ADMIN');
         $cod_frente = $request->input('COD_FRENTE');
         $cod_teu = $request->input('COD_TEU');
@@ -104,17 +102,7 @@ class EleccionesController extends Controller
         
       
 
-// Convertir el número a un valor de tipo char
-      //  $numeroChar = $request->COD_ELECCION+$numeroAleatorio;
 
-        $eleccion = new Eleccion();
-        $eleccion->CODELECCION = (string)$numeroAleatorio;
-        $eleccion->CODCOMITE = (string)$numeroAleatorio;
-        $eleccion->CODADMINISTRADOR = $request->COD_ADMIN;
-        $eleccion->MOTIVOELECCION = $request->MOTIVO_ELECCION;
-        $eleccion->FECHAELECCION = $request->FECHA_ELECCION;
-        $eleccion->ELECCIONACTIVA = $request->ELECCION_ACTIVA;
-        $eleccion->save();
        
     
         return "La elección se ha creado correctamente.";
