@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Elecciones;
 use App\Models\Eleccion;
+use App\Models\Frente;
 use Illuminate\Support\Facades\DB;
 
 
@@ -81,4 +82,23 @@ class EleccionesController extends Controller
 
 
     // Otros métodos del controlador para actualizar, eliminar, mostrar un registro específico, etc.
+    public function asignarFrente(Request $request)
+    {
+        $eleccionId = $request->input('');
+        $frenteId = $request->input(''); 
+        
+        $eleccion = Eleccion::find($eleccionId);
+        $frente = Frente::find($frenteId);
+
+        if(!$eleccion || !$frente)
+        { 
+            return response()->json(['error' => 'El proceso electoral o el frente político no existen.'], 400);   
+        }
+
+        $eleccion->frente()->associate($frente);
+        $eleccion->save();
+
+        return response()->json(['message' => 'Frente asignado al procesos electoral correctamente.']);
+    }
+
 }

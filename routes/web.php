@@ -71,3 +71,11 @@ Route::prefix('frentes')->group(function(){
     Route::put('/{frente}',[FrenteController::class, 'update'])->name('frente.update');
     Route::delete('/{frente}',[FrenteController::class, 'delete'])->name('frente.delete');
 });
+
+Route::get('/frentesyCandidatos', [FrenteController::class, 'listarFrentesYCandidatos'])->name('frente.candidatos');
+
+//Asignar Candidatos al frente
+Route::post('frentes/asignarCandidatos', [CandidatoController::class, 'asignarCandidatoAFrente']);
+
+//Asignar Frente a Proceso electoral
+Route::post('frentes/asignarFrenteAEleccion', [EleccionesController::class, 'asignarFrente']);

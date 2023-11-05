@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Http\Requests\ValidarFrente;
 use App\Models\Frente;
 use Carbon\Carbon;
@@ -69,6 +68,13 @@ class FrenteController extends Controller
         $frente -> ARCHIVADO = true;
 
         return response()->json(['message' => 'El frente se ha eliminado correctamente.']);
+    }
+
+    public function listarFrentesYCandidatos()
+    {
+        $frentes = Frente::with('candidato')->get();
+        
+        return response()->json(['frentes' => $frentes]);
     }
 }
 
