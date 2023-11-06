@@ -32,21 +32,6 @@ class EleccionesController extends Controller
         $eleccion->ELECCION_ACTIVA = $request->ELECCION_ACTIVA;
         $eleccion->save();
 
-       
-
-// Convertir el número a un valor de tipo char
-      //  $numeroChar = $request->COD_ELECCION+$numeroAleatorio;
-
-        $eleccion = new Eleccion();
-        $eleccion->CODELECCION = (string)$numeroAleatorio;
-        $eleccion->CODCOMITE = (string)$numeroAleatorio;
-        $eleccion->CODADMINISTRADOR = $request->COD_ADMIN;
-        $eleccion->MOTIVOELECCION = $request->MOTIVO_ELECCION;
-        $eleccion->FECHAELECCION = $request->FECHA_ELECCION;
-        $eleccion->ELECCIONACTIVA = $request->ELECCION_ACTIVA;
-        $eleccion->save();
-       
-    
         return "La elección se ha creado correctamente.";
     }
     
@@ -87,7 +72,7 @@ class EleccionesController extends Controller
         $eleccionId = $request->input('');
         $frenteId = $request->input(''); 
         
-        $eleccion = Eleccion::find($eleccionId);
+        $eleccion = Elecciones::find($eleccionId);
         $frente = Frente::find($frenteId);
 
         if(!$eleccion || !$frente)
