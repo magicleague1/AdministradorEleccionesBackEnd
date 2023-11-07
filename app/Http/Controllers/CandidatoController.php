@@ -11,16 +11,14 @@ class CandidatoController extends Controller
     public function asignarCandidatoAFrente(Request $request)
     {
         $frenteId = $request->COD_FRENTE;
-        $codSis = $request->COD_SIS;
-        //$candidatos = $request->input('COD_CANDIDATO');
+        $ci = $request->CARNETIDENTIDAD;
+        
 
-        $candidato = Candidato::whereHas('poblacion', function($query) use ($codSis){
-            $query->where('COD_SIS', $codSis);
-        })->first();
+        $candidato = Candidato::where('CARNETIDENTIDAD', $ci)->first();
 
         if(!$candidato)
         {
-            return response()->json(['error', 'No se encontró el Cod SIS proporcionado.']);
+            return response()->json(['error', 'No se encontró el CI proporcionado.']);
         }
 
         $cargo = $request->input('CARGO_POSTULADO_');

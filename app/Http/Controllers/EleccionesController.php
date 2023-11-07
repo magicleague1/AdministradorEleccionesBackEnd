@@ -16,7 +16,7 @@ class EleccionesController extends Controller
         // Obtiene todos los registros de la tabla eleccions
         return Elecciones::get();
     }
-   
+
     public function store(Request $request)
     {
         $numeroAleatorio = rand(1, 500);
