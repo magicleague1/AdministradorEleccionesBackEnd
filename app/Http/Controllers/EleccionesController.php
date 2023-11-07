@@ -69,8 +69,8 @@ class EleccionesController extends Controller
     // Otros métodos del controlador para actualizar, eliminar, mostrar un registro específico, etc.
     public function asignarFrente(Request $request)
     {
-        $eleccionId = $request->input('');
-        $frenteId = $request->input(''); 
+        $eleccionId = $request->COD_ELECCION;
+        $frenteId = $request->COD_FRENTE; 
         
         $eleccion = Elecciones::find($eleccionId);
         $frente = Frente::find($frenteId);
