@@ -18,6 +18,15 @@ use App\Http\Controllers\ConvocatoriaEleccionesController;
 use App\Http\Controllers\PublicarConvocatoriaController;
 
 
+use App\Http\Controllers\EleccionesFrenteController;
+
+use App\Http\Controllers\CandidatoController;
+
+
+use App\Http\Controllers\FrenteController;
+
+
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -157,3 +166,26 @@ Route::delete('/publicar_convocatorias/{id}', [PublicarConvocatoriaController::c
 
 
 Route::get('/publicar_convocatoria_lista', [PublicarConvocatoriaController::class, 'listaPublicarConvocatoria']);
+
+
+//fernado routes
+
+Route::prefix('frentes')->group(function(){
+    Route::get('/',[FrenteController::class, 'index'])->name('frentes');
+    Route::post('/nuevo',[FrenteController::class, 'store']);
+    Route::get('/{frente}',[FrenteController::class, 'show'])->name('frente.show');
+    Route::put('/{frente}',[FrenteController::class, 'update'])->name('frente.update');
+    Route::delete('/{frente}',[FrenteController::class, 'delete'])->name('frente.delete');
+});
+
+Route::get('/frentesyCandidatos', [FrenteController::class, 'listarFrentesYCandidatos'])->name('frente.candidatos');
+
+//Asignar Candidatos al frente
+Route::post('frentes/asignarCandidatos', [CandidatoController::class, 'asignarCandidatoAFrente']);
+
+//Asignar Frente a Proceso electoral
+Route::post('frentes/asignarFrenteAEleccion', [EleccionesController::class, 'asignarFrente']);
+
+//para tabla eleccionesFrente
+Route::post('/elecciones_frente', [EleccionesFrenteController::class, 'store']);
+Route::get('/elecciones_frente', [EleccionesFrenteController::class, 'index']);

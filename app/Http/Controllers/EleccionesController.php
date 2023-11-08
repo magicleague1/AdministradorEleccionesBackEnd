@@ -7,6 +7,7 @@ use App\Models\Elecciones;
 use App\Models\Eleccion;
 
 use App\Models\EleccionesFacCarr;
+use App\Models\EleccionesFrente;
 use App\Models\Facultad;
 use App\Models\Carrera;
 
@@ -137,6 +138,33 @@ class EleccionesController extends Controller
 
         return response()->json(['message' => 'Proceso electoral actualizado correctamente.']);
     }
+
+
+    //fernando 
+
+   /* public function asignarFrente(Request $request)
+    {
+        $eleccionId = $request->COD_ELECCION;
+        $frenteId = $request->COD_FRENTE; 
+        
+        $eleccion = Elecciones::find($eleccionId);
+        $frente = Frente::find($frenteId);
+
+        if(!$eleccion || !$frente)
+        { 
+            return response()->json(['error' => 'El proceso electoral o el frente político no existen.'], 400);   
+        }
+
+        $eleccion->frente()->associate($frente);
+        $eleccion->save();
+
+        return response()->json(['message' => 'Frente asignado al procesos electoral correctamente.']);
+    }*/
+
+
+
+
+
 
 
     // Otros métodos del controlador para actualizar, eliminar, mostrar un registro específico, etc.
