@@ -40,6 +40,37 @@ class EleccionesFrenteController extends Controller
 
         return response()->json(['message' => 'Relación guardada exitosamente']);
     }
+
+
+    public function obtenerFrentesAsignados($idEleccion)
+    {
+        // Buscar los frentes asignados a la elección proporcionada
+        $frentesAsignados = EleccionesFrente::where('COD_ELECCION', $idEleccion)
+            ->select('COD_FRENTE')
+            ->get();
+
+        // Devolver los frentes asignados a esa elección
+        return response()->json($frentesAsignados);
+    }
+
+
+
+    public function actualizarFrentes(Request $request)
+    {
+        $data = $request->all();
+
+        try {
+            // Elimina todos los frentes asociados a la elección recibida
+            EleccionesFrente::where('COD_ELECCION', $data[0]['COD_ELECCION'])->delete();
+
+            // Inserta los nuevos datos
+            EleccionesFrente::insert($data);
+
+            return response()->json(['message' => 'Frentes actualizados correctamente']);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Error al actualizar los frentes'], 500);
+        }
+    }
     
     // Otros métodos como update, destroy, etc., según lo que necesites.
 }

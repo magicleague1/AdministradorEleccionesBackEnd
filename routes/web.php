@@ -189,3 +189,22 @@ Route::post('frentes/asignarFrenteAEleccion', [EleccionesController::class, 'asi
 //para tabla eleccionesFrente
 Route::post('/elecciones_frente', [EleccionesFrenteController::class, 'store']);
 Route::get('/elecciones_frente', [EleccionesFrenteController::class, 'index']);
+
+//eiditar asignacion de frentes
+
+Route::get('/eleccionesAsignadas/{idEleccion}', [EleccionesFrenteController::class, 'obtenerFrentesAsignados']);
+
+
+//para la funcion actulaizar eleecion frente  Jhonatan
+Route::post('/actualizar_frentes', [EleccionesFrenteController::class, 'actualizarFrentes']);
+
+//funconobtiene los candidatos por frente
+
+Route::get('/obtenerCandidatosPorFrente/{codFrente}', [CandidatoController::class, 'obtenerCandidatosPorFrente']);
+
+
+Route::get('/buscarCarnet/{carnetIdentidad}', [CandidatoController::class, 'buscarCarnet']);
+
+
+
+Route::post('/actualizarCandidato', [CandidatoController::class, 'actualizarCandidato']);
