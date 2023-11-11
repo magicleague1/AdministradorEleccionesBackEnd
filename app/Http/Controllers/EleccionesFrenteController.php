@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\EleccionesFrente;
 use Illuminate\Http\Request;
+use App\Models\Frente;
+use Illuminate\Support\Facades\DB;
 
 class EleccionesFrenteController extends Controller
 {
@@ -53,7 +55,20 @@ class EleccionesFrenteController extends Controller
         return response()->json($frentesAsignados);
     }
 
+    public function obtenerFrentesPorEleccion($idEleccion)
+{
+    try {
+        $frentes = DB::table('elecciones_frente')
+            ->join('frente', 'elecciones_frente.COD_FRENTE', '=', 'frente.COD_FRENTE')
+            ->where('elecciones_frente.COD_ELECCION', $idEleccion)
+            ->select('frente.NOMBRE_FRENTE')
+            ->get();
 
+        return response()->json(['frentes' => $frentes]);
+    } catch (\Exception $e) {
+        return response()->json(['error' => 'Error al obtener los frentes'],500);
+}
+}
 
     public function actualizarFrentes(Request $request)
     {

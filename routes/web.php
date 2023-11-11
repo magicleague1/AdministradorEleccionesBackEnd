@@ -193,7 +193,8 @@ Route::get('/elecciones_frente', [EleccionesFrenteController::class, 'index']);
 //eiditar asignacion de frentes
 
 Route::get('/eleccionesAsignadas/{idEleccion}', [EleccionesFrenteController::class, 'obtenerFrentesAsignados']);
-
+//Listar frentes 
+Route::get('/obtener_frentes_por_eleccion/{idEleccion}', [EleccionesFrenteController::class, 'obtenerFrentesPorEleccion']);
 
 //para la funcion actulaizar eleecion frente  Jhonatan
 Route::post('/actualizar_frentes', [EleccionesFrenteController::class, 'actualizarFrentes']);

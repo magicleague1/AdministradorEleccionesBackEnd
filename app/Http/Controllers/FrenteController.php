@@ -27,7 +27,7 @@ class FrenteController extends Controller
 
         $frente -> NOMBRE_FRENTE = $request->NOMBRE_FRENTE;
         $frente -> SIGLA_FRENTE = $request->SIGLA_FRENTE;
-        $frente -> FECHA_INSCRIPCION = $fechaFormateada; 
+        $frente -> FECHA_INSCRIPCION = $request-> FECHA_INSCRIPCION; 
         $frente -> ARCHIVADO = false;
 
         $frente -> save();
@@ -58,6 +58,7 @@ class FrenteController extends Controller
 
         $frente -> NOMBRE_FRENTE = $request->NOMBRE_FRENTE;
         $frente -> SIGLA_FRENTE = $request->SIGLA_FRENTE;
+        $frente ->FECHA_INSCRIPCION = $request->FECHA_INSCRIPCION;
         
         $frente -> save();
     }

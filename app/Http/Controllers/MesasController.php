@@ -28,13 +28,9 @@ class MesasController extends Controller
 
    
     //funciona para eleccion tipo facultad
-    public function asignarMesasPorCarrera($cod_eleccion)
+   public function asignarMesasPorCarrera($cod_eleccion)
     {
         $carreras = EleccionesFacCarr::where('COD_ELECCION', $cod_eleccion)->get();
-    
-      
-     
-       
               foreach ($carreras as $carrera) {
                 
                 $cod_carrera = $carrera->COD_CARRERA;
@@ -54,22 +50,10 @@ class MesasController extends Controller
                     $mesa->NUM_MESA = $i;
                     $mesa->CANT_EST_MESA = 0; // Asignar la cantidad de estudiantes inicial, si es necesario
                     $mesa->save();
-                }
-
-                //return response()->json(['car----------------' => $carreras]);
-     
-               
-   //return response()->json(['alumnos_carrera' => $mesasAsignadas]);
-            
+                }     
         }
-    
-          
-    
         return response()->json(['message' => 'No se encontró la carrera para la elección proporcionada']);
-    
     }
-
-
 
     public function asignarMesasPorCarrera3($cod_eleccion)
     {
