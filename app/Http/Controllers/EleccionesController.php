@@ -46,6 +46,7 @@ class EleccionesController extends Controller
         $eleccion->cod_teu = $cod_teu;
         $eleccion->cod_comite = rand(1, 500); // Genera el código de comité
         $eleccion->motivo_eleccion = $motivo_eleccion;
+        $eleccion->tipo_eleccion=$tipo_eleccion;
         $eleccion->fecha_eleccion = $fecha_eleccion;
         $eleccion->fecha_ini_convocatoria = $fecha_ini_convocatoria;
         $eleccion->fecha_fin_convocatoria = $fecha_fin_convocatoria;

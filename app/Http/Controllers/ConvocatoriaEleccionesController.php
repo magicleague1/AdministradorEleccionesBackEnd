@@ -12,6 +12,26 @@ use Dompdf\Options;
 
 class ConvocatoriaEleccionesController extends Controller
 {
+
+    //validaciones 
+    public function verificarConvocatoria($idEleccion)
+    {
+        try {
+            // Buscar la convocatoria basada en el ID de la elección
+            $convocatoria = ConvocatoriaElecciones::where('id_eleccion', $idEleccion)->first();
+
+            // Si se encuentra la convocatoria, devolver true; de lo contrario, devolver false
+            return response()->json(['existeConvocatoria' => $convocatoria ? true : false]);
+
+        } catch (\Exception $e) {
+            // Manejar errores según tus necesidades
+            return response()->json(['error' => 'Error al verificar la convocatoria'], 500);
+        }
+    }
+
+
+
+    //funciones
     public function index()
     {
         $convocatorias = ConvocatoriaElecciones::all();

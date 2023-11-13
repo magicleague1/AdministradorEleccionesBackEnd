@@ -164,6 +164,145 @@ public function listarMesasAsignadas2()
     return response()->json($formattedResponse);
 }
 
+public function listarMesasAsignadasPorEleccion($idEleccion)
+{
+    $mesasAsignadas = Mesas::select(
+        'Mesas.COD_ELECCION',
+        'Eleccioness.MOTIVO_ELECCION',
+        'Facultad.nombre_facultad',
+        'Eleccioness.fecha_eleccion',
+        'Carrera.COD_CARRERA',
+        'Carrera.nombre_carrera',
+        'Mesas.COD_MESA',
+        'Mesas.NUM_MESA'
+    )
+        ->join('Eleccioness', 'Mesas.COD_ELECCION', '=', 'Eleccioness.COD_ELECCION')
+        ->join('Facultad', 'Mesas.COD_FACULTAD', '=', 'Facultad.COD_FACULTAD')
+        ->join('Carrera', 'Mesas.COD_CARRERA', '=', 'Carrera.COD_CARRERA')
+        ->where('Mesas.COD_ELECCION', $idEleccion)
+        ->distinct()
+        ->get();
+
+    $response = [];
+
+    foreach ($mesasAsignadas as $mesa) {
+        $codEleccion = $mesa->COD_ELECCION;
+        $motivo = $mesa->MOTIVO_ELECCION;
+        $fecha = $mesa->fecha_eleccion;
+        $facultad = $mesa->nombre_facultad;
+        $nombreCarrera = $mesa->nombre_carrera;
+        $codMesa = $mesa->COD_MESA;
+        $numeroMesa = $mesa->NUM_MESA;
+
+        if (!isset($response[$codEleccion])) {
+            $response[$codEleccion] = [
+                'motivo' => $motivo,
+                'fecha_eleccion' => $fecha,
+                'facultad' => $facultad,
+                'carreras' => []
+            ];
+        }
+
+        if (!isset($response[$codEleccion]['carreras'][$nombreCarrera])) {
+            $totalMesas = Mesas::where('COD_ELECCION', $codEleccion)
+                ->where('COD_CARRERA', $mesa->COD_CARRERA)
+                ->count();
+
+            $response[$codEleccion]['carreras'][$nombreCarrera] = [
+                'nombre_carrera' => $nombreCarrera,
+                'total_mesas_por_carrera' => $totalMesas,
+                'mesas' => []
+            ];
+        }
+
+        $response[$codEleccion]['carreras'][$nombreCarrera]['mesas'][] = [
+            'cod_mesa' => $codMesa,
+            'numero_mesa' => $numeroMesa
+        ];
+    }
+
+    // Reorganizar la respuesta para obtener el formato correcto
+    $formattedResponse = [];
+    foreach ($response as $codEleccion => $eleccionData) {
+        $formattedResponse[] = [
+            'motivo' => $eleccionData['motivo'],
+            'facultad' => $eleccionData['facultad'],
+            'fecha_eleccion' => $eleccionData['fecha_eleccion'],
+            'carreras' => array_values($eleccionData['carreras'])
+        ];
+    }
+
+    return response()->json($formattedResponse);
+}
+
+
+public function listarMesasAsignadasPorEleccion2($idEleccion)
+{
+    $mesasAsignadas = Mesas::select(
+        'Mesas.COD_ELECCION',
+        'Eleccioness.MOTIVO_ELECCION',
+        'Facultad.nombre_facultad',
+        'Eleccioness.fecha_eleccion',
+        'Carrera.COD_CARRERA',
+        'Carrera.nombre_carrera',
+        'Mesas.COD_MESA',
+        'Mesas.NUM_MESA'
+    )
+        ->join('Eleccioness', 'Mesas.COD_ELECCION', '=', 'Eleccioness.COD_ELECCION')
+        ->join('Facultad', 'Mesas.COD_FACULTAD', '=', 'Facultad.COD_FACULTAD')
+        ->join('Carrera', 'Mesas.COD_CARRERA', '=', 'Carrera.COD_CARRERA')
+        ->where('Mesas.COD_ELECCION', $idEleccion)
+        ->distinct()
+        ->get();
+
+    $response = [];
+
+    foreach ($mesasAsignadas as $mesa) {
+        $codEleccion = $mesa->COD_ELECCION;
+        $motivo = $mesa->MOTIVO_ELECCION;
+        $fecha = $mesa->fecha_eleccion;
+        $facultad = $mesa->nombre_facultad;
+        $nombreCarrera = $mesa->nombre_carrera;
+        $codMesa = $mesa->COD_MESA;
+        $numeroMesa = $mesa->NUM_MESA;
+
+        if (!isset($response[$codEleccion])) {
+            $response[$codEleccion] = [
+                'motivo' => $motivo,
+                'fecha_eleccion' => $fecha,
+                'facultad' => $facultad,
+                'carreras' => []
+            ];
+        }
+
+        if (!isset($response[$codEleccion]['carreras'][$nombreCarrera])) {
+            $response[$codEleccion]['carreras'][$nombreCarrera] = [
+                'nombre_carrera' => $nombreCarrera,
+                'mesas' => []
+            ];
+        }
+
+        $response[$codEleccion]['carreras'][$nombreCarrera]['mesas'][] = [
+            'cod_mesa' => $codMesa,
+            'numero_mesa' => $numeroMesa
+        ];
+    }
+
+    // Reorganizar la respuesta para obtener el formato correcto
+    $formattedResponse = [];
+    foreach ($response as $codEleccion => $eleccionData) {
+        $formattedResponse[] = [
+            'motivo' => $eleccionData['motivo'],
+            'facultad' => $eleccionData['facultad'],
+            'fecha_eleccion' => $eleccionData['fecha_eleccion'],
+            'carreras' => array_values($eleccionData['carreras'])
+        ];
+    }
+
+    return response()->json($formattedResponse);
+}
+
+
 
 
 public function agregarNuevaMesa(Request $request)

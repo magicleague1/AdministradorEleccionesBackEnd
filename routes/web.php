@@ -109,6 +109,7 @@ Route::get('/mesas_asignadas', [MesasController::class, 'listarMesasAsignadas'])
 
 
 Route::get('/mesas_asignadas2', [MesasController::class, 'listarMesasAsignadas2']);
+Route::get('/listarMesasAsignadasPorEleccion/{idEleccion}', [MesasController::class, 'listarMesasAsignadasPorEleccion']);
 
 
 
@@ -148,6 +149,8 @@ Route::delete('/convocatorias/{id}', [ConvocatoriaEleccionesController::class, '
 
 Route::get('/obtener_id_convocatoria/{idEleccion}', [ConvocatoriaEleccionesController::class, 'obtenerIdConvocatoria']);
 
+
+Route::get('/verificar_convocatoria/{idEleccion}', [ConvocatoriaEleccionesController::class, 'verificarConvocatoria']);
 
 
 Route::get('/generar_pdf/{id}', [ConvocatoriaEleccionesController::class, 'generarPDF']);
