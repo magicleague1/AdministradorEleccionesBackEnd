@@ -13,6 +13,8 @@ class Frente extends Model
     protected $primaryKey = 'COD_FRENTE';
     protected $guarded = [];
     public $timestamps = false;
+    protected $fillable = ['NOMBRE_FRENTE', 'SIGLA_FRENTE', 'LOGO', 'COD_MOTIVO'];
+
     
     public function eleccion(){
         return $this->hasMany(Eleccion::class, 'COD_ELECCION');
@@ -20,5 +22,10 @@ class Frente extends Model
 
     public function candidato(){
         return $this->hasMany(Candidato::class, 'COD_FRENTE');
+    }
+
+    public function motivoEliminacion()
+    {
+        return $this->belongsTo(MotivoEliminacion::class, 'COD_MOTIVO');
     }
 }

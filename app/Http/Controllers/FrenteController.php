@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests\FrenteRequest;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
+use App\Models\MotivoEliminacion;
 
 
 class FrenteController extends Controller
@@ -41,7 +42,7 @@ class FrenteController extends Controller
             $frente -> FECHA_INSCRIPCION = $fechaActual; 
             $frente -> ARCHIVADO = false;
             $frente->LOGO = $nombreLogo;
-
+            
             $frente -> save();
         } else {
             return response()->json(['error' => 'No se proporcionó ningun logo.'], 400);
@@ -65,7 +66,11 @@ class FrenteController extends Controller
     public function update(Request $request, $id)
     {
 
-        
+        $request->validate([
+            'NOMBRE_FRENTE' => 'string|min:2|max:30|unique:frentes,NOMBRE_FRENTE,'. $id,
+            'SIGLA_FRENTE' => 'string|min:2|max:15|unique:frentes,SIGLA_FRENTE,id,lt_field:NOMBRE_FRENTE'. $id,
+            'LOGO' => 'image|mimes:jpeg,png,jpg|max:2048',
+        ]);
 
         $frente = Frente::find($id);
 
@@ -84,15 +89,32 @@ class FrenteController extends Controller
             $logo->storeAs('public/logos', $nombreLogo);
 
             $frente->LOGO = $nombreLogo;
-            $frente->save();
+            
+            if($frente->save()){
+                return response()->json(['message' => 'Frente actualizado correctamente.']);
+            }else{
+                return response()->json(['error' => 'Error al actualizar el frente.']);
+            }
         }
 
-        return response()->json(['message' => 'Frente actualizado correctamente.']);
+        
     }
 
 
-    public function delete($id)
+    public function delete(Request $request, $id)
     {
+        $motivo = $request->MOTIVO;
+
+        if(empty(trim($motivo))){
+            return response()->json(['error' => 'El motivo no puede estar vacio.']);
+        }
+
+        $motivoEliminacion = MotivoEliminacion::where('MOTIVO', $motivo)->first();
+
+        if(!$motivoEliminacion){
+            $motivoEliminacion = MotivoEliminacion::create(['MOTIVO' => $motivo]);
+        }
+
         $frente = Frente::where('ARCHIVADO',false)->find($id);
 
         if(!$frente)
@@ -101,7 +123,8 @@ class FrenteController extends Controller
         }
 
         $frente -> ARCHIVADO = true;
-        $frente->save();
+        $frente -> COD_MOTIVO = $motivoEliminacion->COD_MOTIVO;
+        $frente -> save();
 
         return response()->json(['message' => 'El frente se ha eliminado correctamente.']);
     }

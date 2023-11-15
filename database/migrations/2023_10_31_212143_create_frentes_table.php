@@ -20,7 +20,10 @@ class CreateFrentesTable extends Migration
             $table->dateTime('FECHA_INSCRIPCION');
             $table->boolean('ARCHIVADO')->default(false);
             $table->string('LOGO');
+            $table->unsignedBigInteger('COD_MOTIVO')->nullable();
             $table->timestamps();
+
+            $table->foreign('COD_MOTIVO')->references('COD_MOTIVO')->on('motivos_eliminacion');
         });
     }
 
