@@ -14,7 +14,12 @@ class CreateFrentesTable extends Migration
     public function up()
     {
         Schema::create('frentes', function (Blueprint $table) {
-            $table->id();
+            $table->id('COD_FRENTE');
+            $table->string('NOMBRE_FRENTE');
+            $table->string('SIGLA_FRENTE');
+            $table->dateTime('FECHA_INSCRIPCION');
+            $table->boolean('ARCHIVADO')->default(false);
+            $table->string('LOGO');
             $table->timestamps();
         });
     }

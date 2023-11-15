@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\ValidarFrente;
 use App\Models\Frente;
-use Illuminate\Support\Carbon;
 use Illuminate\Http\Request;
+use App\Http\Requests\FrenteRequest;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\Rule;
 
 
 class FrenteController extends Controller
@@ -19,18 +20,32 @@ class FrenteController extends Controller
 
     public function store(Request $request)
     {
+        $request->validate([
+            'NOMBRE_FRENTE' => 'required|string|min:2|max:30|unique:frentes,NOMBRE_FRENTE',
+            'SIGLA_FRENTE' => 'required|string|min:2|max:15|unique:frentes,SIGLA_FRENTE',
+            'LOGO' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+        ]);
 
         $fechaActual = now();
-        $fechaFormateada = now()->toDateString(); 
-        $frente = new Frente;
 
+        if($request->hasFile('LOGO'))
+        {
+            $logo = $request->file('LOGO');
+            $nombreLogo = uniqid() . '-' . $logo->getClientOriginalName();
+            $logo->storeAs('public/logos', $nombreLogo);
 
-        $frente -> NOMBRE_FRENTE = $request->NOMBRE_FRENTE;
-        $frente -> SIGLA_FRENTE = $request->SIGLA_FRENTE;
-        $frente -> FECHA_INSCRIPCION = $request-> FECHA_INSCRIPCION; 
-        $frente -> ARCHIVADO = false;
+            $frente = new Frente();
 
-        $frente -> save();
+            $frente -> NOMBRE_FRENTE = $request->NOMBRE_FRENTE;
+            $frente -> SIGLA_FRENTE = $request->SIGLA_FRENTE;
+            $frente -> FECHA_INSCRIPCION = $fechaActual; 
+            $frente -> ARCHIVADO = false;
+            $frente->LOGO = $nombreLogo;
+
+            $frente -> save();
+        } else {
+            return response()->json(['error' => 'No se proporcionó ningun logo.'], 400);
+        }
 
         return response()->json(['message' => 'Se ha inscrito el frente correctamente.']);
     }
@@ -49,19 +64,32 @@ class FrenteController extends Controller
 
     public function update(Request $request, $id)
     {
+
+        
+
         $frente = Frente::find($id);
 
-        if(!$frente)
-        {
-            return response()->json(['error' => 'No se encontró el frente.']);
+        if (!$frente) {
+            return response()->json(['error' => 'No se encontró el frente para actualizar.']);
         }
 
-        $frente -> NOMBRE_FRENTE = $request->NOMBRE_FRENTE;
-        $frente -> SIGLA_FRENTE = $request->SIGLA_FRENTE;
-        $frente ->FECHA_INSCRIPCION = $request->FECHA_INSCRIPCION;
-        
-        $frente -> save();
+        $frente->fill($request->only(['NOMBRE_FRENTE', 'SIGLA_FRENTE']));
+
+        if ($request->hasFile('LOGO')) {
+
+            Storage::delete('public/logos/' . $frente->LOGO);
+
+            $logo = $request->file('LOGO');
+            $nombreLogo = uniqid() . '-' . $logo->getClientOriginalName();
+            $logo->storeAs('public/logos', $nombreLogo);
+
+            $frente->LOGO = $nombreLogo;
+            $frente->save();
+        }
+
+        return response()->json(['message' => 'Frente actualizado correctamente.']);
     }
+
 
     public function delete($id)
     {
