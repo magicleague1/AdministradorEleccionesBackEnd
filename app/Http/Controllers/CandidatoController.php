@@ -13,7 +13,7 @@ class CandidatoController extends Controller
     {
         $frenteId = $request->COD_FRENTE;
         $ci = $request->CARNETIDENTIDAD;
-        $cargoPostulado = $request->CARGO_POSTULADO_;
+        $cargoPostulado = $request->CARGO_POSTULADO;
         
 
         $poblacion = Poblacion::where('CARNETIDENTIDAD', $ci)->first();
@@ -24,21 +24,16 @@ class CandidatoController extends Controller
             $nuevoCandidato = new Candidato;
 
             $nuevoCandidato->COD_CANDIDATO = $nuevoIdCandidato;
-            $nuevoCandidato->COD_SIS = $poblacion->COD_SIS;
-            $nuevoCandidato->CARGO_POSTULADO_ = $cargoPostulado;
+            $nuevoCandidato->COD_CARNETIDENTIDAD = $poblacion->CARNETIDENTIDAD;
+            $nuevoCandidato->CARGO_POSTULADO = $cargoPostulado;
             $nuevoCandidato->HABILITADO = 1;
             $nuevoCandidato->COD_FRENTE = $frenteId; 
 
             $nuevoCandidato->save();
 
             //asocia el candidato al frente
-            $frente = Frente::find($frenteId);
-
-            if($frente)
-            {
-                $frente->candidato()->associate($nuevoCandidato);
-                $frente->save();
-            }
+            
+           
 
             return response()->json(['success', 'Candidato asignado correctmanete.']);
         }
@@ -46,5 +41,36 @@ class CandidatoController extends Controller
         return response()->json(['error', 'No se encontró el CI proporcionado.'], 400);
     }
 
+    public function obtenerCandidatosPorFrente($codFrente)
+    {
+        $candidatos = Candidato::where('COD_FRENTE', $codFrente)->get();
+
+        return response()->json($candidatos);
+    }
+
+    public function buscarCarnet($carnetIdentidad)
+{
+    $carnetExiste = Poblacion::where('carnetidentidad', $carnetIdentidad)->exists();
+    
+    return response()->json($carnetExiste);
+}
+
+
+public function actualizarCandidato(Request $request)
+{
+    $candidato = Candidato::find($request->COD_CANDIDATO);
+
+    if ($candidato) {
+        $candidato->COD_CARNETIDENTIDAD = $request->CARNET_IDENTIDAD;
+        $candidato->CARGO_POSTULADO = $request->CARGO;
+        // Aquí puedes agregar más campos que se actualicen
+
+        $candidato->save();
+
+        return response()->json(['message' => 'Candidato actualizado correctamente']);
+    } else {
+        return response()->json(['error' => 'No se encontró el candidato'], 404);
+    }
+}
 
 }

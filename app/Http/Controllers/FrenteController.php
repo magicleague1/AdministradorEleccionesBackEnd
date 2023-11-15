@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\ValidarFrente;
 use App\Models\Frente;
-use Carbon\Carbon;
+use Illuminate\Support\Carbon;
+use Illuminate\Http\Request;
+
 
 class FrenteController extends Controller
 {
@@ -15,13 +17,17 @@ class FrenteController extends Controller
         return response()->json($frentes);
     }
 
-    public function store(ValidarFrente $request)
+    public function store(Request $request)
     {
+
+        $fechaActual = now();
+        $fechaFormateada = now()->toDateString(); 
         $frente = new Frente;
+
 
         $frente -> NOMBRE_FRENTE = $request->NOMBRE_FRENTE;
         $frente -> SIGLA_FRENTE = $request->SIGLA_FRENTE;
-        $frente -> FECHA_INSCRIPCION = Carbon::now()->toDateString();
+        $frente -> FECHA_INSCRIPCION = $request-> FECHA_INSCRIPCION; 
         $frente -> ARCHIVADO = false;
 
         $frente -> save();
@@ -41,7 +47,7 @@ class FrenteController extends Controller
         return response()->json($frente);
     }
 
-    public function update(ValidarFrente $request, $id)
+    public function update(Request $request, $id)
     {
         $frente = Frente::find($id);
 
@@ -52,11 +58,12 @@ class FrenteController extends Controller
 
         $frente -> NOMBRE_FRENTE = $request->NOMBRE_FRENTE;
         $frente -> SIGLA_FRENTE = $request->SIGLA_FRENTE;
+        $frente ->FECHA_INSCRIPCION = $request->FECHA_INSCRIPCION;
         
         $frente -> save();
     }
 
-    public function destroy($id)
+    public function delete($id)
     {
         $frente = Frente::where('ARCHIVADO',false)->find($id);
 
@@ -66,6 +73,7 @@ class FrenteController extends Controller
         }
 
         $frente -> ARCHIVADO = true;
+        $frente->save();
 
         return response()->json(['message' => 'El frente se ha eliminado correctamente.']);
     }
