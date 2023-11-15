@@ -25,6 +25,9 @@ use App\Http\Controllers\CandidatoController;
 
 use App\Http\Controllers\FrenteController;
 
+use App\Http\Controllers\PermisoController;
+
+// Otras rutas...
 
 
 /*
@@ -61,6 +64,8 @@ Route::put('/asignar-comite/{COD_ELECCION}', [App\Http\Controllers\ComiteElector
 
 
 Route::get('/ver-lista-comite/{idComite}', [App\Http\Controllers\AsociarTitularSuplenteController::class, 'verListaComite']);
+Route::get('/ver_lista_comite_id/{idComite}', [App\Http\Controllers\AsociarTitularSuplenteController::class, 'verListaComiteConID']);
+Route::post('/actualizarDatos', [App\Http\Controllers\AsociarTitularSuplenteController::class, 'actualizarDatos']);
 
 //veidicar exit
 Route::get('/verificar-comite/{codComite}', [App\Http\Controllers\AsociarTitularSuplenteController::class, 'verificarExistenciaComite']);
@@ -212,3 +217,19 @@ Route::get('/buscarCarnet/{carnetIdentidad}', [CandidatoController::class, 'busc
 
 
 Route::post('/actualizarCandidato', [CandidatoController::class, 'actualizarCandidato']);
+
+
+//permisos
+
+
+// Ruta para agregar un permiso
+Route::post('/permisos', [PermisoController::class, 'agregarPermiso']);
+
+Route::post('/procesarComprobanteEntregado', [PermisoController::class, 'procesarComprobanteEntregado']);
+// Rutas para obtener el estado del comprobante
+Route::get('/obtenerEstadoComprobante/{codSis}/{codComite}', [PermisoController::class, 'obtenerEstadoComprobante']);
+
+Route::get('/obtenerEstadoComprobanteAtiempo/{codSis}/{codComite}', [PermisoController::class, 'obtenerEstadoComprobanteAtiempo']);
+// web.php o api.php
+
+Route::get('/verificarPermiso/{codSis}/{codComite}', [PermisoController::class, 'verificarPermiso']);

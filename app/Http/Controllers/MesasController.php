@@ -26,34 +26,150 @@ class MesasController extends Controller
         return response()->json($mesa, 201);
     }
 
+    public function asignarMesasPorCarrera($cod_eleccion)
+{
+    $carreras = EleccionesFacCarr::where('COD_ELECCION', $cod_eleccion)->get();
+
+    // Asociar cada letra del alfabeto con un apellido específico
+    $apellidosPorLetra = [
+        'A' => 'ApellidoA',
+        'B' => 'ApellidoB',
+        'C' => 'ApellidoC',
+        'D' => 'ApellidoD',
+        'E' => 'ApellidoE',
+        'F' => 'ApellidoF',
+        'G' => 'ApellidoG',
+        'H' => 'ApellidoH',
+        'I' => 'ApellidoI',
+        'J' => 'ApellidoJ',
+        'K' => 'ApellidoK',
+        'L' => 'ApellidoL',
+        'M' => 'ApellidoM',
+        'N' => 'ApellidoN',
+        'O' => 'ApellidoO',
+        'P' => 'ApellidoP',
+        'Q' => 'ApellidoQ',
+        'R' => 'ApellidoR',
+        'S' => 'ApellidoS',
+        'T' => 'ApellidoT',
+        'U' => 'ApellidoU',
+        'V' => 'ApellidoV',
+        'W' => 'ApellidoW',
+        'X' => 'ApellidoX',
+        'Y' => 'ApellidoY',
+        'Z' => 'ApellidoZ',
+    ];
+    
+
+    foreach ($carreras as $carrera) {
+        $alfabeto = range('A', 'Z');
+
+        $cod_carrera = $carrera->COD_CARRERA;
+        $cod_facultad = $carrera->COD_FACULTAD;
+        $alumnosPorCarrera = PoblacionFacuCarr::where('cod_facultad', $cod_facultad)
+            ->where('cod_carrera', $cod_carrera)
+            ->count();
+
+        $capacidadMesa = 50;
+        $mesasAsignadas = ceil($alumnosPorCarrera / $capacidadMesa);
+        $alfabetoGrupos = array_chunk($alfabeto, ceil(count($alfabeto) / $mesasAsignadas));
+
+        for ($i = 0; $i < $mesasAsignadas; $i++) {
+            $mesa = new Mesas();
+            $mesa->COD_ELECCION = $cod_eleccion;
+            $mesa->COD_FACULTAD = $cod_facultad;
+            $mesa->COD_CARRERA = $cod_carrera;
+            $mesa->NUM_MESA = $i + 1;
+            $mesa->CANT_EST_MESA = 0; // Asignar la cantidad de estudiantes inicial, si es necesario
+
+            // Obtener el apellido asociado a la primera letra del grupo
+            $primeraLetraGrupo = $alfabetoGrupos[$i][0];
+            $ultimaLetraGrupo = end($alfabetoGrupos[$i]);
+             // Verificar si la letra existe en el array asociativo
+    if (isset($apellidosPorLetra[$primeraLetraGrupo]) && isset($apellidosPorLetra[$ultimaLetraGrupo])) {
+        $rangoApellidos = $apellidosPorLetra[$primeraLetraGrupo] . '-' . $apellidosPorLetra[$ultimaLetraGrupo];
+        $mesa->APELLIDOS_ESTUDIANTES = $rangoApellidos;
+    } else {
+        // Manejar el caso si la letra no tiene un apellido asociado
+        $mesa->APELLIDOS_ESTUDIANTES = 'SinApellido';
+    }
+            $mesa->save();
+        }
+    }
+    return response()->json(['message' => 'Mesas asignadas correctamente']);
+}
+
+
    
     //funciona para eleccion tipo facultad
-   public function asignarMesasPorCarrera($cod_eleccion)
+    public function asignarMesasPorCarreraprueva2($cod_eleccion)
     {
         $carreras = EleccionesFacCarr::where('COD_ELECCION', $cod_eleccion)->get();
-              foreach ($carreras as $carrera) {
-                
-                $cod_carrera = $carrera->COD_CARRERA;
-                $cod_facultad = $carrera->COD_FACULTAD;
-                $alumnosPorCarrera = PoblacionFacuCarr::where('cod_facultad', $cod_facultad)
+    
+        foreach ($carreras as $carrera) {
+            
+            $alfabeto = range('A', 'Z');
+    
+            $cod_carrera = $carrera->COD_CARRERA;
+            $cod_facultad = $carrera->COD_FACULTAD;
+            $alumnosPorCarrera = PoblacionFacuCarr::where('cod_facultad', $cod_facultad)
                 ->where('cod_carrera', $cod_carrera)
                 ->count();
-
-                $capacidadMesa = 50;
-                $mesasAsignadas = ceil($alumnosPorCarrera / $capacidadMesa);
-
-                for ($i = 1; $i <= $mesasAsignadas; $i++) {
-                    $mesa = new Mesas();
-                    $mesa->COD_ELECCION = $cod_eleccion;
-                    $mesa->COD_FACULTAD = $cod_facultad;
-                    $mesa->COD_CARRERA = $cod_carrera;
-                    $mesa->NUM_MESA = $i;
-                    $mesa->CANT_EST_MESA = 0; // Asignar la cantidad de estudiantes inicial, si es necesario
-                    $mesa->save();
-                }     
+    
+            $capacidadMesa = 50;
+            $mesasAsignadas = ceil($alumnosPorCarrera / $capacidadMesa);
+            $alfabetoGrupos = array_chunk($alfabeto, ceil(count($alfabeto) / $mesasAsignadas));
+    
+            for ($i = 0; $i < $mesasAsignadas; $i++) { // Cambiado a $i = 0
+                $mesa = new Mesas();
+                $mesa->COD_ELECCION = $cod_eleccion;
+                $mesa->COD_FACULTAD = $cod_facultad;
+                $mesa->COD_CARRERA = $cod_carrera;
+                $mesa->NUM_MESA = $i + 1;
+                $mesa->CANT_EST_MESA = 0; // Asignar la cantidad de estudiantes inicial, si es necesario
+                $mesa->APELLIDOS_ESTUDIANTES = implode(",", $alfabetoGrupos[$i]);
+    
+                $mesa->save();
+            }     
         }
-        return response()->json(['message' => 'No se encontró la carrera para la elección proporcionada']);
+        return response()->json(['message' => 'Mesas asignadas correctamente']);
     }
+
+
+    public function asignarMesasPorCarreraPrueva($cod_eleccion)
+{
+    $carreras = EleccionesFacCarr::where('COD_ELECCION', $cod_eleccion)->get();
+
+    foreach ($carreras as $carrera) {
+        $cod_carrera = $carrera->COD_CARRERA;
+        $cod_facultad = $carrera->COD_FACULTAD;
+
+        $alfabeto = range('A', 'Z'); // Obtener el alfabeto
+
+        $capacidadMesa = 50;
+        $mesasAsignadas = ceil(count($alfabeto) / $capacidadMesa);
+
+        // Dividir el alfabeto en grupos según el número de mesas
+        $alfabetoGrupos = array_chunk($alfabeto, ceil(count($alfabeto) / $mesasAsignadas));
+
+        // Asignar cada grupo de apellidos a una mesa
+        for ($i = 0; $i < $mesasAsignadas; $i++) {
+            $mesa = new Mesas();
+            $mesa->COD_ELECCION = $cod_eleccion;
+            $mesa->COD_FACULTAD = $cod_facultad;
+            $mesa->COD_CARRERA = $cod_carrera;
+            $mesa->NUM_MESA = $i + 1;
+            $mesa->CANT_EST_MESA = 0; // Asignar la cantidad de estudiantes inicial, si es necesario
+
+            // Asignar el rango de apellidos al grupo de la mesa
+            $mesa->APELLIDOS_ESTUDIANTES = implode(",", $alfabetoGrupos[$i]);
+            
+            $mesa->save();
+        }
+
+        return response()->json(['message' => 'Mesas asignadas correctamente']);
+    }
+}
 
     public function asignarMesasPorCarrera3($cod_eleccion)
     {
@@ -165,6 +281,81 @@ public function listarMesasAsignadas2()
 }
 
 public function listarMesasAsignadasPorEleccion($idEleccion)
+{
+    $mesasAsignadas = Mesas::select(
+        'Mesas.COD_ELECCION',
+        'Eleccioness.MOTIVO_ELECCION',
+        'Facultad.nombre_facultad',
+        'Eleccioness.fecha_eleccion',
+        'Carrera.COD_CARRERA',
+        'Carrera.nombre_carrera',
+        'Mesas.COD_MESA',
+        'Mesas.NUM_MESA',
+        'Mesas.APELLIDOS_ESTUDIANTES' // Agregamos la columna APELLIDOS_ESTUDIANTES
+    )
+        ->join('Eleccioness', 'Mesas.COD_ELECCION', '=', 'Eleccioness.COD_ELECCION')
+        ->join('Facultad', 'Mesas.COD_FACULTAD', '=', 'Facultad.COD_FACULTAD')
+        ->join('Carrera', 'Mesas.COD_CARRERA', '=', 'Carrera.COD_CARRERA')
+        ->where('Mesas.COD_ELECCION', $idEleccion)
+        ->distinct()
+        ->get();
+
+    $response = [];
+
+    foreach ($mesasAsignadas as $mesa) {
+        $codEleccion = $mesa->COD_ELECCION;
+        $motivo = $mesa->MOTIVO_ELECCION;
+        $fecha = $mesa->fecha_eleccion;
+        $facultad = $mesa->nombre_facultad;
+        $nombreCarrera = $mesa->nombre_carrera;
+        $codMesa = $mesa->COD_MESA;
+        $numeroMesa = $mesa->NUM_MESA;
+        $apellidosEstudiantes = $mesa->APELLIDOS_ESTUDIANTES; // Nueva columna
+
+        if (!isset($response[$codEleccion])) {
+            $response[$codEleccion] = [
+                'motivo' => $motivo,
+                'fecha_eleccion' => $fecha,
+                'facultad' => $facultad,
+                'carreras' => []
+            ];
+        }
+
+        if (!isset($response[$codEleccion]['carreras'][$nombreCarrera])) {
+            $totalMesas = Mesas::where('COD_ELECCION', $codEleccion)
+                ->where('COD_CARRERA', $mesa->COD_CARRERA)
+                ->count();
+
+            $response[$codEleccion]['carreras'][$nombreCarrera] = [
+                'nombre_carrera' => $nombreCarrera,
+                'total_mesas_por_carrera' => $totalMesas,
+                'mesas' => []
+            ];
+        }
+
+        $response[$codEleccion]['carreras'][$nombreCarrera]['mesas'][] = [
+            'cod_mesa' => $codMesa,
+            'numero_mesa' => $numeroMesa,
+            'apellidos_estudiantes' => $apellidosEstudiantes // Nueva columna
+        ];
+    }
+
+    // Reorganizar la respuesta para obtener el formato correcto
+    $formattedResponse = [];
+    foreach ($response as $codEleccion => $eleccionData) {
+        $formattedResponse[] = [
+            'motivo' => $eleccionData['motivo'],
+            'facultad' => $eleccionData['facultad'],
+            'fecha_eleccion' => $eleccionData['fecha_eleccion'],
+            'carreras' => array_values($eleccionData['carreras'])
+        ];
+    }
+
+    return response()->json($formattedResponse);
+}
+
+
+public function listarMesasAsignadasPorEleccionoriginal($idEleccion)
 {
     $mesasAsignadas = Mesas::select(
         'Mesas.COD_ELECCION',
