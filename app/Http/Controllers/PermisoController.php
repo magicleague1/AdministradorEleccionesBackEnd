@@ -37,20 +37,15 @@ class PermisoController extends Controller
         ]);
 
         // Verificar si el cod_sis existe en la población y está asociado al comité
-        $poblacion = Poblacion::where('codsis', $request->input('cod_sis'))
-            ->where('codcomite', $request->input('cod_comite'))
-            ->first();
-
-        if (!$poblacion) {
-            return response()->json(['error' => 'El cod_sis no está asociado al comité'], 404);
-        }
+       
+        // Obtener la fecha actual
+    $fechaActual = now();
 
         // Obtener la fecha de la elección
-        $fechaEleccion = Elecciones::where('cod_comite', $request->input('cod_comite'))
-            ->value('fecha_eleccion');
+       
 
         // Calcular la fecha de fin de solicitud (24 horas después)
-        $fechaFinSolicitud = Carbon::parse($fechaEleccion)->addDay()->format('Y-m-d H:i:s');
+        $fechaFinSolicitud = Carbon::parse($fechaActual)->addDay()->format('Y-m-d H:i:s');
 
         // Obtener el tipo de usuario (estudiante o docente) desde la tabla poblacion
         $tipoUsuario = Poblacion::where('codsis', $request->input('cod_sis'))
@@ -68,7 +63,7 @@ class PermisoController extends Controller
             'motivo' => $request->input('motivo'),
             'cod_comite' => $request->input('cod_comite'),
             'comprobante_entregado' => $request->input('comprobante_entregado'),
-            'fecha_solicitud' => $fechaEleccion, // Fecha de la elección
+            'fecha_solicitud' => $fechaActual, // Fecha de la elección
             'fecha_fin_solicitud' => $fechaFinSolicitud, // 24 horas después
             'fecha_permiso' => now(), // Fecha actual
             'estado' => 'entregado_con_retraso',
