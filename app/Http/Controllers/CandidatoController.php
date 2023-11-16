@@ -31,10 +31,6 @@ class CandidatoController extends Controller
 
             $nuevoCandidato->save();
 
-            //asocia el candidato al frente
-            
-           
-
             return response()->json(['success', 'Candidato asignado correctmanete.']);
         }
 

@@ -23,7 +23,7 @@ class CreateFrentesTable extends Migration
             $table->unsignedBigInteger('COD_MOTIVO')->nullable();
             $table->timestamps();
 
-            $table->foreign('COD_MOTIVO')->references('COD_MOTIVO')->on('motivos_eliminacion');
+            //$table->foreign('COD_MOTIVO')->references('COD_MOTIVO')->on('motivos_eliminacion');
         });
     }
 

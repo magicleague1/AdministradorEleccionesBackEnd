@@ -12,14 +12,8 @@ class Poblacion extends Model
     public $incrementing = false;
     protected $keyType = '';
     public $timestamps = false;
-
-
-
-
     protected $table = 'poblacion';
-
-    protected $primaryKey = 'CODSIS'; // Ajusta la clave primaria según tus necesidades
-
+    protected $primaryKey = 'CODSIS';
     protected $fillable = [
         'COD_CANDIDATO',
         'CODCOMITE',
@@ -30,8 +24,6 @@ class Poblacion extends Model
         'ESTUDIANTE',
         'DOCENTE'
     ];
-
-
 
     protected $guarded = [];
 

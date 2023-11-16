@@ -3,10 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Frente;
+use App\Models\Elecciones;
 use Illuminate\Http\Request;
-use App\Http\Requests\FrenteRequest;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Validation\Rule;
+use Illuminate\Support\Carbon;
 use App\Models\MotivoEliminacion;
 
 
@@ -21,13 +21,25 @@ class FrenteController extends Controller
 
     public function store(Request $request)
     {
+        $eleccionActiva = Elecciones::where('ELECCION_ACTIVA', true)->first();
+
+        if(!$eleccionActiva){
+            return response()->json(['error' => 'No existe ninguna elección activa en este momento.'], 400);
+        }
+
+        $fechaIniConvocatoria = Carbon::parse($eleccionActiva->FECHA_INI_CONVOCATORIA);
+        $fechaFinConvocatoria = Carbon::parse($eleccionActiva->FECHA_FIN_CONVOCATORIA);
+
+        $fechaActual = now();
+        if(!$fechaActual->between($fechaIniConvocatoria, $fechaFinConvocatoria)){
+            return response()->json(['error' => 'El periodo de inscripción de frentes no está activo.'], 400);
+        }
+
         $request->validate([
             'NOMBRE_FRENTE' => 'required|string|min:2|max:30|unique:frentes,NOMBRE_FRENTE',
             'SIGLA_FRENTE' => 'required|string|min:2|max:15|unique:frentes,SIGLA_FRENTE',
             'LOGO' => 'required|image|mimes:jpeg,png,jpg|max:2048',
         ]);
-
-        $fechaActual = now();
 
         if($request->hasFile('LOGO'))
         {
