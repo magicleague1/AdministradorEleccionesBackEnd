@@ -10,16 +10,10 @@ class Poblacion extends Model
 {
     use HasFactory;
     public $incrementing = false;
-    protected $keyType = 'string';
+    protected $keyType = '';
     public $timestamps = false;
-
-
-
-
     protected $table = 'poblacion';
-
-    protected $primaryKey = 'CODSIS'; // Ajusta la clave primaria según tus necesidades
-
+    protected $primaryKey = 'CODSIS';
     protected $fillable = [
         'COD_CANDIDATO',
         'CODCOMITE',
@@ -31,7 +25,25 @@ class Poblacion extends Model
         'DOCENTE'
     ];
 
-
-
     protected $guarded = [];
+
+    public function tribunalElectoralUniversitario(){
+        return $this->belongsTo(TribunalElectoralUniversitario::class, 'COD_TEU');
+    }
+
+    public function carrera(){
+        return $this->belongsTo(Carrera::class, 'COD_CARRERA');
+    }
+
+    public function jurado(){
+        return $this->hasOne(Jurado::class, 'COD_JURADO');
+    }
+
+    public function comiteElectoral(){
+        return $this->belongsTo(Comite_Electoral::class, 'COD_COMITE');
+    }
+
+    public function candidato(){
+        return $this->hasOne(Candidato::class, 'COD_CANDIDATO');
+    }
 }

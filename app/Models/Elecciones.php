@@ -22,4 +22,9 @@ class Elecciones extends Model
         'FECHA_FIN_CONVOCATORIA',
         'ELECCION_ACTIVA',
     ];
+
+    public function frente()
+    {
+        return $this->belongsTo(Frente::class, 'COD_FRENTE');
+    }
 }
