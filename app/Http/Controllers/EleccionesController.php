@@ -24,7 +24,6 @@ class EleccionesController extends Controller
 
     public function store(Request $request)
     {
-      
         $cod_admin = $request->input('COD_ADMIN');
         $cod_frente = $request->input('COD_FRENTE');
         $cod_teu = $request->input('COD_TEU');

@@ -11,9 +11,8 @@ class Frente extends Model
     protected $table = 'frentes'; 
     protected $keyType = 'integer';
     protected $primaryKey = 'COD_FRENTE';
-    protected $guarded = [];
     public $timestamps = false;
-    protected $fillable = ['NOMBRE_FRENTE', 'SIGLA_FRENTE', 'LOGO', 'COD_MOTIVO'];
+    protected $fillable = ['NOMBRE_FRENTE', 'SIGLA_FRENTE', 'LOGO', 'COD_MOTIVO','COD_CARRERA'];
 
     
     public function eleccion(){
@@ -27,5 +26,9 @@ class Frente extends Model
     public function motivoEliminacion()
     {
         return $this->belongsTo(MotivoEliminacion::class, 'COD_MOTIVO');
+    }
+    public function carrera()
+    {
+        return $this->belongsTo(Carrera::class, 'COD_CARRERA');
     }
 }
