@@ -19,4 +19,9 @@ class Carrera extends Model
     {
         return $this->belongsTo(Facultad::class, 'COD_FACULTAD');
     }
+
+    public function frentes()
+    {
+        return $this->hasMany(Frente::class, 'carrera_frente','COD_CARRERA', 'COD_FRENTE');
+    }
 }

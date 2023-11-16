@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Elecciones;
-use App\Models\Eleccion;
+use App\Models\Frente;
 
 use App\Models\EleccionesFacCarr;
 use App\Models\EleccionesFrente;
@@ -21,10 +21,9 @@ class EleccionesController extends Controller
         // Obtiene todos los registros de la tabla eleccions
         return Elecciones::get();
     }
-   
+
     public function store(Request $request)
     {
-      
         $cod_admin = $request->input('COD_ADMIN');
         $cod_frente = $request->input('COD_FRENTE');
         $cod_teu = $request->input('COD_TEU');
@@ -99,14 +98,8 @@ class EleccionesController extends Controller
             $eleccion_fac_carr->cod_facultad = $cod_facultad;
             $eleccion_fac_carr->cod_carrera = $cod_carrera;
             $eleccion_fac_carr->save();
-         
         }
         
-      
-
-
-       
-    
         return "La elección se ha creado correctamente.";
     }
     
@@ -121,6 +114,7 @@ class EleccionesController extends Controller
 
         return response()->json($eleccion);
     }
+    
     public function update(Request $request, $id)
     {
         $eleccion = Elecciones::find($id);
@@ -140,10 +134,8 @@ class EleccionesController extends Controller
         return response()->json(['message' => 'Proceso electoral actualizado correctamente.']);
     }
 
-
-    //fernando 
-
-   /* public function asignarFrente(Request $request)
+    // Otros métodos del controlador para actualizar, eliminar, mostrar un registro específico, etc.
+    public function asignarFrente(Request $request)
     {
         $eleccionId = $request->COD_ELECCION;
         $frenteId = $request->COD_FRENTE; 
@@ -160,13 +152,6 @@ class EleccionesController extends Controller
         $eleccion->save();
 
         return response()->json(['message' => 'Frente asignado al procesos electoral correctamente.']);
-    }*/
+    }
 
-
-
-
-
-
-
-    // Otros métodos del controlador para actualizar, eliminar, mostrar un registro específico, etc.
 }
