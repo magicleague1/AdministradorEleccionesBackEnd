@@ -13,7 +13,7 @@ class CreateFrentesTable extends Migration
      */
     public function up()
     {
-        Schema::create('frentes', function (Blueprint $table) {
+        Schema::create('frente', function (Blueprint $table) {
             $table->id('COD_FRENTE');
             $table->string('NOMBRE_FRENTE');
             $table->string('SIGLA_FRENTE');

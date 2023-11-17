@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Frente extends Model
 {
     use HasFactory;
-    protected $table = 'frentes'; 
+    protected $table = 'frente'; 
     protected $keyType = 'integer';
     protected $primaryKey = 'COD_FRENTE';
     public $timestamps = false;
