@@ -200,4 +200,17 @@ class FrenteController extends Controller
         
         return response()->json(['frentes' => $frentes]);
     }
+
+    public function obtenerFrentesPorCarrera($COD_CARRERA)
+    {
+
+        if (!is_numeric($COD_CARRERA)) {
+            return response()->json(['error' => 'El código de carrera debe ser un número.'], 400);
+        }
+
+        $frentesCarrera = Frente::where('COD_CARRERA', $COD_CARRERA)->get();
+
+        return response()->json(['frentes' => $frentesCarrera]);
+    }
+
 }
