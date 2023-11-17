@@ -6,34 +6,20 @@ use App\Http\Controllers\AdministradorController;
 use App\Http\Controllers\EleccionController;
 use App\Http\Controllers\FrenteController;
 use App\Http\Controllers\PoblacionController;
-
 use App\Http\Controllers\FacultadController;
 use App\Http\Controllers\CarreraController;
-
 use App\Http\Controllers\EleccionesFacCarrController;
 use App\Http\Controllers\MesasController;
-
 use App\Http\Controllers\PoblacionFacuCarrController;
 use App\Http\Controllers\ConvocatoriaEleccionesController;
-
 use App\Http\Controllers\PublicarConvocatoriaController;
-
-
 use App\Http\Controllers\EleccionesFrenteController;
-
 use App\Http\Controllers\CandidatoController;
-<<<<<<< HEAD
-
-
-use App\Http\Controllers\FrenteController;
-
 use App\Http\Controllers\PermisoController;
 
 // Otras rutas...
 
 
-=======
->>>>>>> LFCC
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -224,7 +210,6 @@ Route::get('/buscarCarnet/{carnetIdentidad}', [CandidatoController::class, 'busc
 Route::post('/actualizarCandidato', [CandidatoController::class, 'actualizarCandidato']);
 
 
-<<<<<<< HEAD
 //permisos
 
 
@@ -239,7 +224,6 @@ Route::get('/obtenerEstadoComprobanteAtiempo/{codSis}/{codComite}', [PermisoCont
 // web.php o api.php
 
 Route::get('/verificarPermiso/{codSis}/{codComite}', [PermisoController::class, 'verificarPermiso']);
-=======
 //eleciones
 
 
@@ -350,4 +334,3 @@ Route::get('/buscarCarnet/{carnetIdentidad}', [CandidatoController::class, 'busc
 
 
 Route::post('/actualizarCandidato', [CandidatoController::class, 'actualizarCandidato']);
->>>>>>> LFCC
