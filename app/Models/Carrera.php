@@ -22,6 +22,6 @@ class Carrera extends Model
 
     public function frentes()
     {
-        return $this->hasMany(Frente::class, 'carrera_frente','COD_CARRERA', 'COD_FRENTE');
+        return $this->hasMany(Frente::class, 'COD_CARRERA');
     }
 }

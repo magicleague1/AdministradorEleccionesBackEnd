@@ -36,9 +36,10 @@ class FrenteController extends Controller
         }
 
         $request->validate([
-            'NOMBRE_FRENTE' => 'required|string|min:2|max:30|unique:frentes,NOMBRE_FRENTE',
-            'SIGLA_FRENTE' => 'required|string|min:2|max:15|unique:frentes,SIGLA_FRENTE',
+            'NOMBRE_FRENTE' => 'required|string|min:2|max:30|unique:frente,NOMBRE_FRENTE',
+            'SIGLA_FRENTE' => 'required|string|min:2|max:15|unique:frente,SIGLA_FRENTE',
             'LOGO' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+            'COD_CARRERA' => 'required'
         ]);
 
         if($request->hasFile('LOGO'))
@@ -53,7 +54,8 @@ class FrenteController extends Controller
             $frente -> SIGLA_FRENTE = $request->SIGLA_FRENTE;
             $frente -> FECHA_INSCRIPCION = $fechaActual; 
             $frente -> ARCHIVADO = false;
-            $frente->LOGO = $nombreLogo;
+            $frente -> LOGO = $nombreLogo;
+            $frente -> COD_CARRERA = $request->COD_CARRERA;
             
             $frente -> save();
         } else {
@@ -75,43 +77,67 @@ class FrenteController extends Controller
         return response()->json($frente);
     }
 
-    public function update(Request $request, $id)
+    /*public function update(Request $request, $id)
     {
+        $eleccionActiva = Elecciones::where('ELECCION_ACTIVA', true)->first();
+
+        if (!$eleccionActiva) {
+            return response()->json(['error' => 'No existe ninguna elección activa en este momento.'], 400);
+        }
+
+        $fechaIniConvocatoria = Carbon::parse($eleccionActiva->FECHA_INI_CONVOCATORIA);
+        $fechaFinConvocatoria = Carbon::parse($eleccionActiva->FECHA_FIN_CONVOCATORIA);
+
+        $fechaActual = now();
+        if (!$fechaActual->between($fechaIniConvocatoria, $fechaFinConvocatoria)) {
+            return response()->json(['error' => 'El periodo de inscripción de frentes no está activo.'], 400);
+        }
 
         $request->validate([
-            'NOMBRE_FRENTE' => 'string|min:2|max:30|unique:frentes,NOMBRE_FRENTE,'. $id,
-            'SIGLA_FRENTE' => 'string|min:2|max:15|unique:frentes,SIGLA_FRENTE,id,lt_field:NOMBRE_FRENTE'. $id,
+            'NOMBRE_FRENTE' => 'required|string|min:2|max:30|unique:frente,NOMBRE_FRENTE,' . $id,
+            'SIGLA_FRENTE' => 'required|string|min:2|max:15|unique:frente,SIGLA_FRENTE,' . $id,
             'LOGO' => 'image|mimes:jpeg,png,jpg|max:2048',
+            'COD_CARRERA' => 'required'
         ]);
 
         $frente = Frente::find($id);
 
         if (!$frente) {
-            return response()->json(['error' => 'No se encontró el frente para actualizar.']);
+            return response()->json(['error' => 'No se encontró el frente para actualizar.'], 404);
         }
 
-        $frente->fill($request->only(['NOMBRE_FRENTE', 'SIGLA_FRENTE']));
+        $frente->NOMBRE_FRENTE = $request->NOMBRE_FRENTE;
+        $frente->SIGLA_FRENTE = $request->SIGLA_FRENTE;
+        $frente->COD_CARRERA = $request->COD_CARRERA;
 
         if ($request->hasFile('LOGO')) {
-
+            // Elimina el logo anterior
             Storage::delete('public/logos/' . $frente->LOGO);
 
+            // Sube y guarda el nuevo logo
             $logo = $request->file('LOGO');
             $nombreLogo = uniqid() . '-' . $logo->getClientOriginalName();
             $logo->storeAs('public/logos', $nombreLogo);
 
             $frente->LOGO = $nombreLogo;
-            
-            if($frente->save()){
-                return response()->json(['message' => 'Frente actualizado correctamente.']);
-            }else{
-                return response()->json(['error' => 'Error al actualizar el frente.']);
-            }
         }
-    }
 
-    /*public function update(Request $request, $id)
-    {
+        $frente->save();
+
+        return response()->json(['message' => 'Frente actualizado correctamente.']);
+    }*/
+
+
+
+    public function update(Request $request, $id)
+    {   
+        $request->validate([
+            'NOMBRE_FRENTE' => 'required|string|min:2|max:30',
+            'SIGLA_FRENTE' => 'required|string|min:2|max:15',
+            'LOGO' => 'image|mimes:jpeg,png,jpg|max:2048',
+            'COD_CARRERA' => 'required',
+        ]);
+        
         $frente = Frente::find($id);
 
         if(!$frente)
@@ -121,10 +147,23 @@ class FrenteController extends Controller
 
         $frente -> NOMBRE_FRENTE = $request->NOMBRE_FRENTE;
         $frente -> SIGLA_FRENTE = $request->SIGLA_FRENTE;
-        $frente ->FECHA_INSCRIPCION = $request->FECHA_INSCRIPCION;
+        $frente -> COD_CARRERA = $request->COD_CARRERA;
+
+        if ($request->hasFile('LOGO')) {
+            // Elimina el logo anterior
+            Storage::delete('public/logos/' . $frente->LOGO);
+
+            // Sube y guarda el nuevo logo
+            $logo = $request->file('LOGO');
+            $nombreLogo = uniqid() . '-' . $logo->getClientOriginalName();
+            $logo->storeAs('public/logos', $nombreLogo);
+
+            $frente->LOGO = $nombreLogo;
+        }
         
         $frente -> save();
-    }*/
+        return response()->json(['message' => 'Frente actualizado correctamente']);
+    }
 
 
     public function delete(Request $request, $id)

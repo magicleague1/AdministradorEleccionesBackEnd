@@ -3,7 +3,6 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\EleccionesController;
 use App\Http\Controllers\AdministradorController;
-use App\Http\Controllers\EleccionController;
 use App\Http\Controllers\FrenteController;
 use App\Http\Controllers\PoblacionController;
 use App\Http\Controllers\FacultadController;
@@ -48,8 +47,6 @@ Route::post('/crearProcesoElectoral',[App\Http\Controllers\ProcesoElectoralContr
 Route::post('/asignar-vocales/{COD_COMITE}', [App\Http\Controllers\PoblacionController::class, 'asignarVocales']);
 //Route::get('/asignar-vocales/{COD_COMITE}/{COD_ELECCION}', [App\Http\Controllers\PoblacionController::class, 'asignarVocales']);
 
-Route::get('/elecciones', [App\Http\Controllers\EleccionController::class, 'index']);
-
 Route::put('/asignar-comite/{COD_ELECCION}', [App\Http\Controllers\ComiteElectoralController::class, 'asignarComite']);
 
 
@@ -68,12 +65,6 @@ Route::post('/elecciones_data', [EleccionesController::class, 'store']);
 
 Route::get('/obtener_id/{id}', [EleccionesController::class, 'obtenerEleccionPorId']);
 Route::put('/eleccionesUpdate/{id}', [EleccionesController::class, 'update']);
-
-
-
-
-Route::post('/eleccionesStore', [EleccionController::class, 'store']);
-
 
 Route::get('/poblacionindex', [PoblacionController::class, 'index']);
 
