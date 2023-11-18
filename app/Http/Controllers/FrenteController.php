@@ -135,7 +135,6 @@ class FrenteController extends Controller
             'NOMBRE_FRENTE' => 'required|string|min:2|max:30',
             'SIGLA_FRENTE' => 'required|string|min:2|max:15',
             'LOGO' => 'image|mimes:jpeg,png,jpg|max:2048',
-            'COD_CARRERA' => 'required',
         ]);
         
         $frente = Frente::find($id);
