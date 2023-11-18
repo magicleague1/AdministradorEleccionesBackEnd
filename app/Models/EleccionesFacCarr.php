@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class EleccionesFacCarr extends Model
 {
-    protected $table = 'Elecciones_Fac_Carr';
+    protected $table = 'elecciones_fac_carr';
     protected $primaryKey = null; // La tabla tiene una clave primaria compuesta
 
     public $incrementing = false;
