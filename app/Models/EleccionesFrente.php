@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class EleccionesFrente extends Model
 {
-    protected $table = 'Elecciones_Frente';
+    protected $table = 'elecciones_frente';
     protected $primaryKey = null;
     public $incrementing = false;
     public $timestamps = false;

@@ -164,7 +164,7 @@ Route::prefix('frentes')->group(function(){
     Route::post('/nuevo/{COD_ELECCION}',[FrenteController::class, 'store'])->name('frente.store');
     Route::get('/{frente}',[FrenteController::class, 'show'])->name('frente.show');
     Route::put('/{frente}',[FrenteController::class, 'update'])->name('frente.update');
-    Route::delete('/{frente}',[FrenteController::class, 'delete'])->name('frente.delete');
+    Route::put('delete/{frente}',[FrenteController::class, 'delete'])->name('frente.delete');
     Route::get('/carrera/{COD_CARRERA}', [FrenteController::class, 'obtenerFrentesPorCarrera'])->name('frentes.carrera');
 });
 

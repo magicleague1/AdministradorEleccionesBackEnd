@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Mesas extends Model
 {
-    protected $table = 'Mesas';
+    protected $table = 'mesas';
     protected $primaryKey = 'COD_MESA';
     public $timestamps = false;
 
