@@ -6,8 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Carrera extends Model
 {
-    protected $table = 'carrera'; // Nombre de la tabla en la base de datos
-    protected $primaryKey = 'COD_CARRERA'; // Nombre de la clave primaria
+    protected $table = 'carrera';
+    protected $primaryKey = 'COD_CARRERA';
 
     protected $fillable = [
         'COD_FACULTAD',

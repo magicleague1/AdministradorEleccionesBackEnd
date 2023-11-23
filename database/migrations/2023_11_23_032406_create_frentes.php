@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateFrentesTable extends Migration
+class CreateFrentes extends Migration
 {
     /**
      * Run the migrations.
@@ -24,10 +24,6 @@ class CreateFrentesTable extends Migration
             $table->integer('COD_CARRERA')->nullable();
             $table->integer('COD_ELECCION');
             $table->timestamps();
-
-            $table->foreign('COD_MOTIVO')->references('COD_MOTIVO')->on('motivos_eliminacion');
-            //$table->foreign('COD_CARRERA')->references('COD_CARRERA')->on('carrera');
-            //$table->foreign('COD_ELECCION')->references('COD_ELECCION')->on('eleccioness');
         });
     }
 

@@ -16,6 +16,7 @@ class Mesas extends Model
         'COD_CARRERA',
         'NUM_MESA',
         'CANT_EST_MESA',
+        'APELLIDOS_ESTUDIANTES',
     ];
 
  

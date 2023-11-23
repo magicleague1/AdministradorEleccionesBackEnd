@@ -21,10 +21,7 @@ class MigrarPoblaciones extends Migration
             $table->integer('CARNETIDENTIDAD');
             $table->tinyInteger('ESTUDIANTE')->nullable();
             $table->tinyInteger('DOCENTE')->nullable();
-            $table->unsignedBigInteger('COD_FRENTE')->nullable();
-
-            // Restricción de clave foránea
-            //$table->foreign('COD_FRENTE')->references('COD_FRENTE')->on('frentes')->onDelete('SET NULL');
+            
 
             $table->timestamps();
         });

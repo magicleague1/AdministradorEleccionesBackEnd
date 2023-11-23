@@ -19,15 +19,11 @@ class EleccionesFrente extends Model
         'COD_FRENTE',
     ];
 
-   
-    // Si deseas agregar relaciones, puedes definirlas aquí
-    // Ejemplo: relación con la tabla 'elecciones'
     public function eleccion()
     {
         return $this->belongsTo(Elecciones::class, 'COD_ELECCION', 'cod_eleccion');
     }
 
-    // Ejemplo: relación con la tabla 'frente'
     public function frente()
     {
         return $this->belongsTo(Frente::class, 'COD_FRENTE', 'COD_FRENTE');

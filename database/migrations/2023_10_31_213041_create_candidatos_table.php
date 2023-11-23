@@ -13,8 +13,13 @@ class CreateCandidatosTable extends Migration
      */
     public function up()
     {
-        Schema::create('candidatos', function (Blueprint $table) {
-            $table->id();
+        Schema::create('candidato', function (Blueprint $table) {
+            $table->id('COD_CANDIDATO');
+            $table->unsignedBigInteger('COD_FRENTE')->nullable()->default(null);
+            $table->string('COD_CARNETIDENTIDAD', 25)->nullable()->default(null);
+            $table->string('CARGO_POSTULADO', 30);
+            $table->tinyInteger('HABILITADO');
+
             $table->timestamps();
         });
     }

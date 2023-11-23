@@ -30,6 +30,6 @@ class CreateCarreras extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('carreras');
+        Schema::dropIfExists('carrera');
     }
 }
