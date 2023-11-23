@@ -19,12 +19,14 @@ class FrenteController extends Controller
         return response()->json($frentes);
     }
 
-    public function store(Request $request)
+    public function store(Request $request, $COD_ELECCION)
     {
-        $eleccionActiva = Elecciones::where('ELECCION_ACTIVA', true)->first();
+        $eleccionActiva = Elecciones::where('COD_ELECCION', $COD_ELECCION)
+            ->where('ELECCION_ACTIVA', true)
+            ->first();
 
         if(!$eleccionActiva){
-            return response()->json(['error' => 'No existe ninguna elección activa en este momento.'], 400);
+            return response()->json(['error' => 'La elección no está activa en este momento.'], 400);
         }
 
         $fechaIniConvocatoria = Carbon::parse($eleccionActiva->FECHA_INI_CONVOCATORIA);
@@ -32,14 +34,14 @@ class FrenteController extends Controller
 
         $fechaActual = now();
         if(!$fechaActual->between($fechaIniConvocatoria, $fechaFinConvocatoria)){
-            return response()->json(['error' => 'El periodo de inscripción de frentes no está activo.'], 400);
+            return response()->json(['error' => 'El periodo de inscripción de frentes para esta elección no está activo.'], 400);
         }
 
         $request->validate([
             'NOMBRE_FRENTE' => 'required|string|min:2|max:30|unique:frente,NOMBRE_FRENTE',
             'SIGLA_FRENTE' => 'required|string|min:2|max:15|unique:frente,SIGLA_FRENTE',
             'LOGO' => 'required|image|mimes:jpeg,png,jpg|max:2048',
-            'COD_CARRERA' => 'required'
+            //'COD_CARRERA' => 'required'
         ]);
 
         if($request->hasFile('LOGO'))
@@ -55,7 +57,8 @@ class FrenteController extends Controller
             $frente -> FECHA_INSCRIPCION = $fechaActual; 
             $frente -> ARCHIVADO = false;
             $frente -> LOGO = $nombreLogo;
-            $frente -> COD_CARRERA = $request->COD_CARRERA;
+            //$frente -> COD_CARRERA = $request->COD_CARRERA;
+            $frente -> COD_ELECCION = $COD_ELECCION;
             
             $frente -> save();
         } else {
@@ -134,7 +137,7 @@ class FrenteController extends Controller
         $request->validate([
             'NOMBRE_FRENTE' => 'required|string|min:2|max:30',
             'SIGLA_FRENTE' => 'required|string|min:2|max:15',
-            'LOGO' => 'image|mimes:jpeg,png,jpg|max:2048',
+            //'LOGO' => 'image|mimes:jpeg,png,jpg|max:2048',
             'COD_CARRERA' => 'required',
         ]);
         
@@ -145,11 +148,11 @@ class FrenteController extends Controller
             return response()->json(['error' => 'No se encontró el frente.']);
         }
 
-        $frente -> NOMBRE_FRENTE = $request->NOMBRE_FRENTE;
-        $frente -> SIGLA_FRENTE = $request->SIGLA_FRENTE;
-        $frente -> COD_CARRERA = $request->COD_CARRERA;
+        $frente -> NOMBRE_FRENTE = $request->input('NOMBRE_FRENTE');
+        $frente -> SIGLA_FRENTE = $request->input('SIGLA_FRENTE');
+        $frente -> COD_CARRERA = $request->input('COD_CARRERA');
 
-        if ($request->hasFile('LOGO')) {
+        /*if ($request->hasFile('LOGO')) {
             // Elimina el logo anterior
             Storage::delete('public/logos/' . $frente->LOGO);
 
@@ -159,7 +162,7 @@ class FrenteController extends Controller
             $logo->storeAs('public/logos', $nombreLogo);
 
             $frente->LOGO = $nombreLogo;
-        }
+        }*/
         
         $frente -> save();
         return response()->json(['message' => 'Frente actualizado correctamente']);
@@ -196,7 +199,7 @@ class FrenteController extends Controller
 
     public function listarFrentesYCandidatos()
     {
-        $frentes = Frente::with('candidato')->get();
+        $frentes = Frente::with(['candidato', 'candidato.CARGO_POSTULADO'])->get();
         
         return response()->json(['frentes' => $frentes]);
     }
@@ -209,6 +212,10 @@ class FrenteController extends Controller
         }
 
         $frentesCarrera = Frente::where('COD_CARRERA', $COD_CARRERA)->get();
+
+        if ($frentesCarrera->isEmpty()) {
+            return response()->json(['mensaje' => 'No se encontraron frentes para la carrera especificada.']);
+        }
 
         return response()->json(['frentes' => $frentesCarrera]);
     }

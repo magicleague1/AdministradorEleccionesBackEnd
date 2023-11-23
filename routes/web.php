@@ -161,7 +161,7 @@ Route::get('/publicar_convocatoria_lista', [PublicarConvocatoriaController::clas
 
 Route::prefix('frentes')->group(function(){
     Route::get('/',[FrenteController::class, 'index'])->name('frentes');
-    Route::post('/nuevo',[FrenteController::class, 'store']);
+    Route::post('/nuevo/{COD_ELECCION}',[FrenteController::class, 'store'])->name('frente.store');
     Route::get('/{frente}',[FrenteController::class, 'show'])->name('frente.show');
     Route::put('/{frente}',[FrenteController::class, 'update'])->name('frente.update');
     Route::delete('/{frente}',[FrenteController::class, 'delete'])->name('frente.delete');

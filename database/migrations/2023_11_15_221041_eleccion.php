@@ -13,7 +13,7 @@ class Eleccion extends Migration
      */
     public function up()
     {
-        Schema::create('eleccioness', function (Blueprint $table) {
+        Schema::create('elecciones', function (Blueprint $table) {
             $table->id('COD_ELECCION');
             $table->string('COD_ADMIN', 30)->nullable();
             $table->unsignedBigInteger('COD_FRENTE')->nullable();
@@ -24,15 +24,8 @@ class Eleccion extends Migration
             $table->date('FECHA_ELECCION');
             $table->date('FECHA_INI_CONVOCATORIA');
             $table->date('FECHA_FIN_CONVOCATORIA');
-            $table->date('FECHA_INI_INSC_FRENTES');
-            $table->date('FECHA_FIN_INSC_FRENTES');
             $table->boolean('ELECCION_ACTIVA')->default(1);
             $table->timestamps();
-
-            // Claves foráneas
-            $table->foreign('COD_FRENTE')->references('COD_FRENTE')->on('frentes')->onDelete('SET NULL');
-            $table->foreign('COD_TEU')->references('COD_TEU')->on('teus')->onDelete('SET NULL');
-            $table->foreign('COD_COMITE')->references('COD_COMITE')->on('comites')->onDelete('SET NULL');
         });
     }
 
