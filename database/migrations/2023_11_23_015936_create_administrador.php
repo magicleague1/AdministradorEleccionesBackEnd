@@ -14,12 +14,12 @@ class CreateAdministrador extends Migration
     public function up()
     {
         Schema::create('administrador', function (Blueprint $table) {
-            $table->id('CODADMINISTRADOR'); // Esto ya es autoincremental y clave primaria
+            $table->id('CODADMINISTRADOR');
             $table->integer('CODCOMITE')->nullable()->default(null);
             $table->char('NOMBREADMINISTRADOR', 40)->nullable()->default(null);
             $table->char('CONTRASENAADMINISTRADOR', 10)->nullable()->default(null);
             $table->char('CORREO', 20)->nullable()->default(null);
-            $table->integer('TELEFONO')->nullable()->default(null); // No autoincremental
+            $table->integer('TELEFONO')->nullable()->default(null);
         
             $table->timestamps();
         });
