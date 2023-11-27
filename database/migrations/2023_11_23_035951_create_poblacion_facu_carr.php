@@ -17,9 +17,6 @@ class CreatePoblacionFacuCarr extends Migration
             $table->char('codsis', 25);
             $table->unsignedBigInteger('cod_facultad');
             $table->unsignedBigInteger('cod_carrera');
-
-            /*$table->index('cod_facultad');
-            $table->index('cod_carrera');*/
             
             $table->timestamps();
         });

@@ -14,13 +14,14 @@ class CreateAsociarTitularSuplente extends Migration
     public function up()
     {
         Schema::create('asociartitularsuplente', function (Blueprint $table) {
-            $table->integer('ID_TS', 15)->nullable()->default(null);
-            $table->integer('COD_SIS', 15)->nullable()->default(null);
-            $table->integer('COD_COMITE', 15)->nullable()->default(null);
-            $table->integer('COD_TITULAR_SUPLENTE', 15)->nullable()->default(null);
-
+            $table->id('ID_TS')->nullable()->default(null);
+            $table->integer('COD_SIS')->nullable()->default(null);
+            $table->integer('COD_COMITE')->nullable()->default(null);
+            $table->integer('COD_TITULAR_SUPLENTE')->nullable()->default(null);
+        
             $table->timestamps();
         });
+        
     }
 
     /**

@@ -41,7 +41,7 @@ class FrenteController extends Controller
             'NOMBRE_FRENTE' => 'required|string|min:2|max:30|unique:frente,NOMBRE_FRENTE',
             'SIGLA_FRENTE' => 'required|string|min:2|max:15|unique:frente,SIGLA_FRENTE',
             'LOGO' => 'required|image|mimes:jpeg,png,jpg|max:2048',
-            //'COD_CARRERA' => 'required'
+            'COD_CARRERA' => 'required'
         ]);
 
         if($request->hasFile('LOGO'))
@@ -57,7 +57,7 @@ class FrenteController extends Controller
             $frente -> FECHA_INSCRIPCION = $fechaActual; 
             $frente -> ARCHIVADO = false;
             $frente -> LOGO = $nombreLogo;
-            //$frente -> COD_CARRERA = $request->COD_CARRERA;
+            $frente -> COD_CARRERA = $request->COD_CARRERA;
             $frente -> COD_ELECCION = $COD_ELECCION;
             
             $frente -> save();

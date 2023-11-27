@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class Eleccion extends Migration
+class CreateElecciones extends Migration
 {
     /**
      * Run the migrations.
@@ -36,6 +36,6 @@ class Eleccion extends Migration
      */
     public function down()
     {
-        //
+        Schema::dropIfExists('elecciones');
     }
 }

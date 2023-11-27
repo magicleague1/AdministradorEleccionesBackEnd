@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class MigrarPoblaciones extends Migration
+class CreatePoblacion extends Migration
 {
     /**
      * Run the migrations.
@@ -18,6 +18,7 @@ class MigrarPoblaciones extends Migration
             $table->char('COD_COMITE', 15)->nullable();
             $table->char('APELLIDO', 40);
             $table->char('NOMBRE', 40);
+            $table->char('CORREO', 40);
             $table->integer('CARNETIDENTIDAD');
             $table->tinyInteger('ESTUDIANTE')->nullable();
             $table->tinyInteger('DOCENTE')->nullable();

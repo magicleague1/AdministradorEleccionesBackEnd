@@ -23,9 +23,6 @@ class CreateProcesoelectoral extends Migration
             $table->char('TIPOELECCIONES', 25)->nullable()->default(null);
             $table->char('CONVOCATORIA', 60)->nullable()->default(null);
 
-            //$table->index('CODADMINISTRADOR');
-
-            $table->primary('CODPROCESOELECTORAL');
             $table->timestamps();
         });
     }
