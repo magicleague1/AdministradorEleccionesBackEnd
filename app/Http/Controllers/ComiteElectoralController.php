@@ -44,11 +44,7 @@ class ComiteElectoralController extends Controller
                 ->toArray();
 
                 $docentes = Poblacion::where('DOCENTE', 1)
-                ->whereIn('codsis', function ($query) use ($facultad_id) {
-                    $query->select('codsis')
-                        ->from('poblacion_facu_carr')
-                        ->where('cod_facultad', $facultad_id);
-                })
+                
                 ->where('CODCOMITE', null)
                 ->whereNotIn('CODSIS', $asignados)
                 ->inRandomOrder()
