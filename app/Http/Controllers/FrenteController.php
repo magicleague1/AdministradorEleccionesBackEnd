@@ -18,56 +18,32 @@ class FrenteController extends Controller
 
         return response()->json($frentes);
     }
-
-    public function store(Request $request, $COD_ELECCION)
+    public function store(Request $request)
     {
-        $eleccionActiva = Elecciones::where('COD_ELECCION', $COD_ELECCION)
-            ->where('ELECCION_ACTIVA', true)
-            ->first();
+        // Valida los datos recibidos en la solicitud
 
-        if(!$eleccionActiva){
-            return response()->json(['error' => 'La elección no está activa en este momento.'], 400);
-        }
 
-        $fechaIniConvocatoria = Carbon::parse($eleccionActiva->FECHA_INI_CONVOCATORIA);
-        $fechaFinConvocatoria = Carbon::parse($eleccionActiva->FECHA_FIN_CONVOCATORIA);
+        // Obtiene el archivo de imagen y genera un nombre único para el logo
+        $logo = $request->file('LOGO');
+        $nombreLogo = "null";
 
-        $fechaActual = now();
-        if(!$fechaActual->between($fechaIniConvocatoria, $fechaFinConvocatoria)){
-            return response()->json(['error' => 'El periodo de inscripción de frentes para esta elección no está activo.'], 400);
-        }
-
-        $request->validate([
-            'NOMBRE_FRENTE' => 'required|string|min:2|max:30|unique:frente,NOMBRE_FRENTE',
-            'SIGLA_FRENTE' => 'required|string|min:2|max:15|unique:frente,SIGLA_FRENTE',
-            'LOGO' => 'required|image|mimes:jpeg,png,jpg|max:2048',
-            'COD_CARRERA' => 'required'
-        ]);
-
-        if($request->hasFile('LOGO'))
-        {
-            $logo = $request->file('LOGO');
-            $nombreLogo = uniqid() . '-' . $logo->getClientOriginalName();
-            $logo->storeAs('public/logos', $nombreLogo);
-
+        try {
+            // Intenta crear y guardar el frente político
             $frente = new Frente();
+            $frente->NOMBRE_FRENTE = $request->NOMBRE_FRENTE;
+            $frente->SIGLA_FRENTE = $request->SIGLA_FRENTE;
+            $frente->FECHA_INSCRIPCION = now();
+            $frente->LOGO = $nombreLogo;
+            $frente->save();
 
-            $frente -> NOMBRE_FRENTE = $request->NOMBRE_FRENTE;
-            $frente -> SIGLA_FRENTE = $request->SIGLA_FRENTE;
-            $frente -> FECHA_INSCRIPCION = $fechaActual; 
-            $frente -> ARCHIVADO = false;
-            $frente -> LOGO = $nombreLogo;
-            $frente -> COD_CARRERA = $request->COD_CARRERA;
-            $frente -> COD_ELECCION = $COD_ELECCION;
-            
-            $frente -> save();
-        } else {
-            return response()->json(['error' => 'No se proporcionó ningun logo.'], 400);
+
+
+            return response()->json(['message' => 'Se ha inscrito el frente correctamente.']);
+        } catch (\Exception $e) {
+            // Maneja cualquier error que pueda ocurrir durante el proceso
+            return response()->json(['error' => 'Error al inscribir el frente político.', 'details' => $e->getMessage()], 500);
         }
-
-        return response()->json(['message' => 'Se ha inscrito el frente correctamente.']);
     }
-
     public function show($id)
     {
         $frente = Frente::where('ARCHIVADO',false)->find($id);
@@ -133,14 +109,14 @@ class FrenteController extends Controller
 
 
     public function update(Request $request, $id)
-    {   
+    {
         $request->validate([
             'NOMBRE_FRENTE' => 'required|string|min:2|max:30',
             'SIGLA_FRENTE' => 'required|string|min:2|max:15',
             //'LOGO' => 'image|mimes:jpeg,png,jpg|max:2048',
             'COD_CARRERA' => 'required',
         ]);
-        
+
         $frente = Frente::find($id);
 
         if(!$frente)
@@ -163,7 +139,7 @@ class FrenteController extends Controller
 
             $frente->LOGO = $nombreLogo;
         }*/
-        
+
         $frente -> save();
         return response()->json(['message' => 'Frente actualizado correctamente']);
     }
@@ -200,7 +176,7 @@ class FrenteController extends Controller
     public function listarFrentesYCandidatos()
     {
         $frentes = Frente::with(['candidato', 'candidato.CARGO_POSTULADO'])->get();
-        
+
         return response()->json(['frentes' => $frentes]);
     }
 

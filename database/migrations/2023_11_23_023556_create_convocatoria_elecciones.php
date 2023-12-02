@@ -27,8 +27,6 @@ class CreateConvocatoriaElecciones extends Migration
             $table->text('restricciones')->nullable()->default(null);
             $table->string('contacto', 100)->nullable()->default(null);
             $table->string('lugar', 100)->nullable()->default(null);
-
-            $table->timestamps();
         });
     }
 

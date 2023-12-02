@@ -9,7 +9,10 @@ class AsociarTitularSuplente extends Model
 {
     use HasFactory;
 
+    public $timestamps = false;
     protected $table = 'asociartitularsuplente';
+    protected $keyType = 'integer';
+    protected $primaryKey = 'ID_TS';
 
     protected $fillable = [
         'ID_TS',
@@ -17,5 +20,5 @@ class AsociarTitularSuplente extends Model
         'COD_COMITE',
         'COD_TITULAR_SUPLENTE',
     ];
-    public $timestamps = false;
+
 }

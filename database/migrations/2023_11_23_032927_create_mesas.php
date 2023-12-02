@@ -25,8 +25,6 @@ class CreateMesas extends Migration
             $table->index('COD_ELECCION');
             $table->index('COD_FACULTAD');
             $table->index('COD_CARRERA');
-
-            $table->timestamps();
         });
     }
 

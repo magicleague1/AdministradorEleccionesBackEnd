@@ -17,8 +17,6 @@ class CreateFacultad extends Migration
             $table->id('COD_FACULTAD');
             $table->string('NOMBRE_FACULTAD', 50);
             $table->text('DESCRIPCION')->nullable();
-
-            $table->timestamps();
         });
     }
 

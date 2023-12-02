@@ -161,7 +161,7 @@ Route::get('/publicar_convocatoria_lista', [PublicarConvocatoriaController::clas
 
 Route::prefix('frentes')->group(function(){
     Route::get('/',[FrenteController::class, 'index'])->name('frentes');
-    Route::post('/nuevo/{COD_ELECCION}',[FrenteController::class, 'store'])->name('frente.store');
+    Route::post('/nuevo',[FrenteController::class, 'store']);
     Route::get('/{frente}',[FrenteController::class, 'show'])->name('frente.show');
     Route::put('/{frente}',[FrenteController::class, 'update'])->name('frente.update');
     Route::put('delete/{frente}',[FrenteController::class, 'delete'])->name('frente.delete');
@@ -183,7 +183,7 @@ Route::get('/elecciones_frente', [EleccionesFrenteController::class, 'index']);
 //eiditar asignacion de frentes
 
 Route::get('/eleccionesAsignadas/{idEleccion}', [EleccionesFrenteController::class, 'obtenerFrentesAsignados']);
-//Listar frentes 
+//Listar frentes
 Route::get('/obtener_frentes_por_eleccion/{idEleccion}', [EleccionesFrenteController::class, 'obtenerFrentesPorEleccion']);
 
 //para la funcion actulaizar eleecion frente  Jhonatan
@@ -309,7 +309,7 @@ Route::get('/elecciones_frente', [EleccionesFrenteController::class, 'index']);
 //eiditar asignacion de frentes
 
 Route::get('/eleccionesAsignadas/{idEleccion}', [EleccionesFrenteController::class, 'obtenerFrentesAsignados']);
-//Listar frentes 
+//Listar frentes
 Route::get('/obtener_frentes_por_eleccion/{idEleccion}', [EleccionesFrenteController::class, 'obtenerFrentesPorEleccion']);
 
 //para la funcion actulaizar eleecion frente  Jhonatan

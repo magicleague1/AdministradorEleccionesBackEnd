@@ -19,8 +19,6 @@ class CreateEleccionesFrente extends Migration
 
             $table->primary(['COD_ELECCION', 'COD_FRENTE']);
             $table->index('COD_FRENTE');
-
-            $table->timestamps();
         });
     }
 

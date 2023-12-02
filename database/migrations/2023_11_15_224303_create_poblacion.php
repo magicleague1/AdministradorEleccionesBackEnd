@@ -14,17 +14,16 @@ class CreatePoblacion extends Migration
     public function up()
     {
         Schema::create('poblacion', function (Blueprint $table) {
-            $table->integer('CODSIS')->primary();
-            $table->char('COD_COMITE', 15)->nullable();
-            $table->char('APELLIDO', 40);
+            $table->char('CODSIS', 25); // Cambiado a char y eliminado primary
+            $table->char('CODCOMITE', 25)->nullable();
             $table->char('NOMBRE', 40);
-            $table->char('CORREO', 40);
-            $table->integer('CARNETIDENTIDAD');
+            $table->char('CARNETIDENTIDAD', 25); // Cambiado a char
             $table->tinyInteger('ESTUDIANTE')->nullable();
             $table->tinyInteger('DOCENTE')->nullable();
-            
+            $table->char('APELLIDO', 40);
 
-            $table->timestamps();
+            // Añadir índice único para CODSIS si es necesario
+            // $table->unique('CODSIS');
         });
     }
 
@@ -35,6 +34,6 @@ class CreatePoblacion extends Migration
      */
     public function down()
     {
-        //
+        Schema::dropIfExists('poblacion');
     }
 }

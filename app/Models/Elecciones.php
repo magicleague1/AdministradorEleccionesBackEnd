@@ -9,8 +9,8 @@ class Elecciones extends Model
 {
     protected $table = 'elecciones'; // Nombre de la tabla en la base de datos
     protected $primaryKey = 'COD_ELECCION'; // Clave primaria
-    public $timestamps = true; // Habilitar los campos created_at y updated_at
-   
+    public $timestamps = false; // Habilitar los campos created_at y updated_at
+
     protected $fillable = [
         'COD_ADMIN',
         'COD_FRENTE',

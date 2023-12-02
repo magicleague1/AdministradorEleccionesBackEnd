@@ -35,10 +35,10 @@ class EleccionesController extends Controller
         $tipo_eleccion = $request->input('TIPO_ELECCION');
         $cod_facultad = $request->input('cod_facultad');
         $cod_carrera = $request->input('cod_carrera');
-        
+
         $cod_facultad = $request->input('cod_facultad');
         $cod_carrera = $request->input('cod_carrera');
-    
+
         $eleccion = new Elecciones();
         $eleccion->cod_admin = $cod_admin;
         $eleccion->cod_frente = $cod_frente;
@@ -51,16 +51,17 @@ class EleccionesController extends Controller
         $eleccion->fecha_fin_convocatoria = $fecha_fin_convocatoria;
         $eleccion->eleccion_activa = $eleccion_activa;
         $eleccion->save();
-        $cod_eleccion = $eleccion->getKey(); 
+        $cod_eleccion = $eleccion->getKey();
 
-    
+        
+
         if ($motivo_eleccion === 'universitaria') {
             // Obtener todas las facultades y sus carreras
             $facultadesYCarreras = DB::table('facultad')
                 ->join('Carrera', 'Facultad.COD_FACULTAD', '=', 'Carrera.COD_FACULTAD')
                 ->select('Facultad.COD_FACULTAD as cod_facultad', 'Carrera.COD_CARRERA as cod_carrera')
                 ->get();
-    
+
             // Insertar en la tabla EleccionesFacCarr
             foreach ($facultadesYCarreras as $row) {
                 DB::table('elecciones_fac_carr')->insert([
@@ -75,7 +76,7 @@ class EleccionesController extends Controller
                 ->where('COD_FACULTAD', $cod_facultad)
                 ->select('COD_CARRERA as cod_carrera')
                 ->get();
-    
+
             // Insertar en la tabla EleccionesFacCarr
             foreach ($carrerasFacultad as $row) {
                 DB::table('Elecciones_Fac_Carr')->insert([
@@ -99,11 +100,11 @@ class EleccionesController extends Controller
             $eleccion_fac_carr->cod_carrera = $cod_carrera;
             $eleccion_fac_carr->save();
         }
-        
+
         return "La elección se ha creado correctamente.";
     }
-    
-    
+
+
     public function obtenerEleccionPorId($id)
     {
         $eleccion = Elecciones::find($id);
@@ -114,7 +115,7 @@ class EleccionesController extends Controller
 
         return response()->json($eleccion);
     }
-    
+
     public function update(Request $request, $id)
     {
         $eleccion = Elecciones::find($id);
@@ -138,14 +139,14 @@ class EleccionesController extends Controller
     public function asignarFrente(Request $request)
     {
         $eleccionId = $request->COD_ELECCION;
-        $frenteId = $request->COD_FRENTE; 
-        
+        $frenteId = $request->COD_FRENTE;
+
         $eleccion = Elecciones::find($eleccionId);
         $frente = Frente::find($frenteId);
 
         if(!$eleccion || !$frente)
-        { 
-            return response()->json(['error' => 'El proceso electoral o el frente político no existen.'], 400);   
+        {
+            return response()->json(['error' => 'El proceso electoral o el frente político no existen.'], 400);
         }
 
         $eleccion->frente()->associate($frente);
