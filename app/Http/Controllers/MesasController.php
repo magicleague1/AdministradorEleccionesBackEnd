@@ -367,20 +367,20 @@ public function listarMesasAsignadas2()
 public function listarMesasAsignadasPorEleccion($idEleccion)
 {
     $mesasAsignadas = Mesas::select(
-        'Mesas.COD_ELECCION',
-        'Elecciones.MOTIVO_ELECCION',
-        'Facultad.nombre_facultad',
-        'Elecciones.fecha_eleccion',
-        'Carrera.COD_CARRERA',
-        'Carrera.nombre_carrera',
-        'Mesas.COD_MESA',
-        'Mesas.NUM_MESA',
-        'Mesas.APELLIDOS_ESTUDIANTES' // Agregamos la columna APELLIDOS_ESTUDIANTES
+        'mesas.COD_ELECCION',
+        'elecciones.MOTIVO_ELECCION',
+        'facultad.nombre_facultad',
+        'elecciones.fecha_eleccion',
+        'carrera.COD_CARRERA',
+        'carrera.nombre_carrera',
+        'mesas.COD_MESA',
+        'mesas.NUM_MESA',
+        'mesas.APELLIDOS_ESTUDIANTES' // Agregamos la columna APELLIDOS_ESTUDIANTES
     )
-        ->join('Elecciones', 'Mesas.COD_ELECCION', '=', 'Elecciones.COD_ELECCION')
-        ->join('Facultad', 'Mesas.COD_FACULTAD', '=', 'Facultad.COD_FACULTAD')
-        ->join('Carrera', 'Mesas.COD_CARRERA', '=', 'Carrera.COD_CARRERA')
-        ->where('Mesas.COD_ELECCION', $idEleccion)
+        ->join('elecciones', 'mesas.COD_ELECCION', '=', 'elecciones.COD_ELECCION')
+        ->join('facultad', 'mesas.COD_FACULTAD', '=', 'facultad.COD_FACULTAD')
+        ->join('carrera', 'mesas.COD_CARRERA', '=', 'carrera.COD_CARRERA')
+        ->where('mesas.COD_ELECCION', $idEleccion)
         ->distinct()
         ->get();
 
