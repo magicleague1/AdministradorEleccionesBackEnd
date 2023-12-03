@@ -4,11 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Models\Frente;
 use App\Models\Elecciones;
+use App\Models\EleccionesFrente;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Carbon;
 use App\Models\MotivoEliminacion;
-
+use Illuminate\Support\Facades\DB;
 
 class FrenteController extends Controller
 {
@@ -18,6 +19,45 @@ class FrenteController extends Controller
 
         return response()->json($frentes);
     }
+
+    public function getFrentesByEleccion($cod_eleccion)
+    {
+        // Obtener los frentes que no están asociados a la elección y los asociados a la frente seleccionada
+        $frentesDisponibles = DB::table('frente')
+            ->where('ARCHIVADO', false)
+            ->where(function ($query) use ($cod_eleccion) {
+                $query
+                    ->whereNotIn('COD_FRENTE', function ($subquery) use ($cod_eleccion) {
+                        $subquery->select('COD_FRENTE')
+                            ->from('elecciones_frente')
+                            ->where('COD_ELECCION', '<>', $cod_eleccion);
+                    })
+                    ->orWhere('COD_FRENTE', '=', $cod_eleccion);
+            })
+            ->select(
+                'COD_FRENTE',
+                'NOMBRE_FRENTE',
+                'SIGLA_FRENTE',
+                'FECHA_INSCRIPCION',
+                'LOGO',
+                'COD_MOTIVO',
+                'COD_CARRERA',
+                'COD_ELECCION'
+            )
+            ->get();
+
+        return response()->json($frentesDisponibles);
+    }
+
+
+
+
+
+
+
+
+
+
     public function store(Request $request)
     {
         // Valida los datos recibidos en la solicitud

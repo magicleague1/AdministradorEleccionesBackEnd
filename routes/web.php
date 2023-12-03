@@ -77,7 +77,7 @@ Route::get('/facultades', [FacultadController::class, 'index']);
 
 
 Route::get('/carreras', [CarreraController::class, 'index']);
- 
+
 
 Route::get('/carreras/{cod_facultad}', [CarreraController::class, 'getCarrerasByFacultad']);
 
@@ -167,6 +167,8 @@ Route::prefix('frentes')->group(function(){
     Route::put('delete/{frente}',[FrenteController::class, 'delete'])->name('frente.delete');
     Route::get('/carrera/{COD_CARRERA}', [FrenteController::class, 'obtenerFrentesPorCarrera'])->name('frentes.carrera');
 });
+
+Route::get('/getFrentesByEleccion/{cod_eleccion}', [FrenteController::class, 'getFrentesByEleccion']);
 
 Route::get('/frentesyCandidatos', [FrenteController::class, 'listarFrentesYCandidatos'])->name('frente.candidatos');
 

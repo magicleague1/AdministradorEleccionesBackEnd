@@ -62,15 +62,12 @@ class MesasController extends Controller
             'Z' => 'ApellidoZ',
         ];
 
-
-
         foreach ($carreras as $carrera) {
             $alfabeto = range('A', 'Z');
 
             $cod_carrera = $carrera->COD_CARRERA;
             $cod_facultad = $carrera->COD_FACULTAD;
 
-            // Optimización de la consulta para contar alumnos
             $alumnosPorCarrera = PoblacionFacuCarr::where('cod_facultad', $cod_facultad)
                 ->where('cod_carrera', $cod_carrera)
                 ->count();
@@ -106,6 +103,7 @@ class MesasController extends Controller
         return response()->json(['error' => 'Error durante la asignación de mesas: ' . $e->getMessage()], 500);
     }
 }
+
 
 
     public function asignarMesasPorCarrera0502($cod_eleccion)
@@ -369,6 +367,7 @@ public function listarMesasAsignadasPorEleccion($idEleccion)
     $mesasAsignadas = Mesas::select(
         'mesas.COD_ELECCION',
         'elecciones.MOTIVO_ELECCION',
+        'facultad.COD_FACULTAD',
         'facultad.nombre_facultad',
         'elecciones.fecha_eleccion',
         'carrera.COD_CARRERA',
@@ -380,7 +379,7 @@ public function listarMesasAsignadasPorEleccion($idEleccion)
     ->join('elecciones', 'mesas.COD_ELECCION', '=', 'elecciones.COD_ELECCION')
     ->join('facultad', 'mesas.COD_FACULTAD', '=', 'facultad.COD_FACULTAD')
     ->join('carrera', 'mesas.COD_CARRERA', '=', 'carrera.COD_CARRERA')
-    ->where('mesas.COD_ELECCION', 1)
+    ->where('mesas.COD_ELECCION', $idEleccion) // Usar el parámetro en lugar de un valor fijo
     ->distinct()
     ->get();
 
@@ -390,37 +389,44 @@ public function listarMesasAsignadasPorEleccion($idEleccion)
         $codEleccion = $mesa->COD_ELECCION;
         $motivo = $mesa->MOTIVO_ELECCION;
         $fecha = $mesa->fecha_eleccion;
-        $facultad = $mesa->nombre_facultad;
+        $codFacultad = $mesa->COD_FACULTAD;
+        $nombreFacultad = $mesa->nombre_facultad;
         $nombreCarrera = $mesa->nombre_carrera;
         $codMesa = $mesa->COD_MESA;
         $numeroMesa = $mesa->NUM_MESA;
-        $apellidosEstudiantes = $mesa->APELLIDOS_ESTUDIANTES; // Nueva columna
+        $apellidosEstudiantes = $mesa->APELLIDOS_ESTUDIANTES;
 
         if (!isset($response[$codEleccion])) {
             $response[$codEleccion] = [
                 'motivo' => $motivo,
                 'fecha_eleccion' => $fecha,
-                'facultad' => $facultad,
+                'facultades' => []
+            ];
+        }
+
+        if (!isset($response[$codEleccion]['facultades'][$codFacultad])) {
+            $response[$codEleccion]['facultades'][$codFacultad] = [
+                'nombre_facultad' => $nombreFacultad,
                 'carreras' => []
             ];
         }
 
-        if (!isset($response[$codEleccion]['carreras'][$nombreCarrera])) {
+        if (!isset($response[$codEleccion]['facultades'][$codFacultad]['carreras'][$nombreCarrera])) {
             $totalMesas = Mesas::where('COD_ELECCION', $codEleccion)
                 ->where('COD_CARRERA', $mesa->COD_CARRERA)
                 ->count();
 
-            $response[$codEleccion]['carreras'][$nombreCarrera] = [
+            $response[$codEleccion]['facultades'][$codFacultad]['carreras'][$nombreCarrera] = [
                 'nombre_carrera' => $nombreCarrera,
                 'total_mesas_por_carrera' => $totalMesas,
                 'mesas' => []
             ];
         }
 
-        $response[$codEleccion]['carreras'][$nombreCarrera]['mesas'][] = [
+        $response[$codEleccion]['facultades'][$codFacultad]['carreras'][$nombreCarrera]['mesas'][] = [
             'cod_mesa' => $codMesa,
             'numero_mesa' => $numeroMesa,
-            'apellidos_estudiantes' => $apellidosEstudiantes // Nueva columna
+            'apellidos_estudiantes' => $apellidosEstudiantes
         ];
     }
 
@@ -429,9 +435,8 @@ public function listarMesasAsignadasPorEleccion($idEleccion)
     foreach ($response as $codEleccion => $eleccionData) {
         $formattedResponse[] = [
             'motivo' => $eleccionData['motivo'],
-            'facultad' => $eleccionData['facultad'],
             'fecha_eleccion' => $eleccionData['fecha_eleccion'],
-            'carreras' => array_values($eleccionData['carreras'])
+            'facultades' => array_values($eleccionData['facultades'])
         ];
     }
 
