@@ -77,7 +77,7 @@ Route::get('/facultades', [FacultadController::class, 'index']);
 
 
 Route::get('/carreras', [CarreraController::class, 'index']);
-
+ 
 
 Route::get('/carreras/{cod_facultad}', [CarreraController::class, 'getCarrerasByFacultad']);
 

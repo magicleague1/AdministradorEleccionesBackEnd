@@ -375,14 +375,14 @@ public function listarMesasAsignadasPorEleccion($idEleccion)
         'carrera.nombre_carrera',
         'mesas.COD_MESA',
         'mesas.NUM_MESA',
-        'mesas.APELLIDOS_ESTUDIANTES' // Agregamos la columna APELLIDOS_ESTUDIANTES
+        'mesas.APELLIDOS_ESTUDIANTES'
     )
-        ->join('elecciones', 'mesas.COD_ELECCION', '=', 'elecciones.COD_ELECCION')
-        ->join('facultad', 'mesas.COD_FACULTAD', '=', 'facultad.COD_FACULTAD')
-        ->join('carrera', 'mesas.COD_CARRERA', '=', 'carrera.COD_CARRERA')
-        ->where('mesas.COD_ELECCION', $idEleccion)
-        ->distinct()
-        ->get();
+    ->join('elecciones', 'mesas.COD_ELECCION', '=', 'elecciones.COD_ELECCION')
+    ->join('facultad', 'mesas.COD_FACULTAD', '=', 'facultad.COD_FACULTAD')
+    ->join('carrera', 'mesas.COD_CARRERA', '=', 'carrera.COD_CARRERA')
+    ->where('mesas.COD_ELECCION', 1)
+    ->distinct()
+    ->get();
 
     $response = [];
 
