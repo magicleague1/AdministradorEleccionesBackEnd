@@ -26,7 +26,89 @@ class MesasController extends Controller
         return response()->json($mesa, 201);
     }
 
+
     public function asignarMesasPorCarrera($cod_eleccion)
+{
+    try {
+        $carreras = EleccionesFacCarr::where('COD_ELECCION', $cod_eleccion)->get();
+
+        // Asociar cada letra del alfabeto con un apellido específico
+        $apellidosPorLetra = [
+            'A' => 'ApellidoA',
+            'B' => 'ApellidoB',
+            'C' => 'ApellidoC',
+            'D' => 'ApellidoD',
+            'E' => 'ApellidoE',
+            'F' => 'ApellidoF',
+            'G' => 'ApellidoG',
+            'H' => 'ApellidoH',
+            'I' => 'ApellidoI',
+            'J' => 'ApellidoJ',
+            'K' => 'ApellidoK',
+            'L' => 'ApellidoL',
+            'M' => 'ApellidoM',
+            'N' => 'ApellidoN',
+            'O' => 'ApellidoO',
+            'P' => 'ApellidoP',
+            'Q' => 'ApellidoQ',
+            'R' => 'ApellidoR',
+            'S' => 'ApellidoS',
+            'T' => 'ApellidoT',
+            'U' => 'ApellidoU',
+            'V' => 'ApellidoV',
+            'W' => 'ApellidoW',
+            'X' => 'ApellidoX',
+            'Y' => 'ApellidoY',
+            'Z' => 'ApellidoZ',
+        ];
+
+
+
+        foreach ($carreras as $carrera) {
+            $alfabeto = range('A', 'Z');
+
+            $cod_carrera = $carrera->COD_CARRERA;
+            $cod_facultad = $carrera->COD_FACULTAD;
+
+            // Optimización de la consulta para contar alumnos
+            $alumnosPorCarrera = PoblacionFacuCarr::where('cod_facultad', $cod_facultad)
+                ->where('cod_carrera', $cod_carrera)
+                ->count();
+
+            $capacidadMesa = 50;
+            $mesasAsignadas = ceil($alumnosPorCarrera / $capacidadMesa);
+            $alfabetoGrupos = array_chunk($alfabeto, ceil(count($alfabeto) / $mesasAsignadas));
+
+            for ($i = 0; $i < $mesasAsignadas; $i++) {
+                $mesa = new Mesas();
+                $mesa->COD_ELECCION = $cod_eleccion;
+                $mesa->COD_FACULTAD = $cod_facultad;
+                $mesa->COD_CARRERA = $cod_carrera;
+                $mesa->NUM_MESA = $i + 1;
+                $mesa->CANT_EST_MESA = 0; // Asignar la cantidad de estudiantes inicial, si es necesario
+
+                // Obtener el apellido asociado a la primera y última letra del grupo
+                $primerApellido = $apellidosPorLetra[$alfabetoGrupos[$i][0]] ?? 'SinApellido';
+                $ultimaLetraGrupo = end($alfabetoGrupos[$i]);
+                $ultimoApellido = $apellidosPorLetra[$ultimaLetraGrupo] ?? 'SinApellido';
+                $mesa->APELLIDOS_ESTUDIANTES = $primerApellido . '-' . $ultimoApellido;
+
+                $mesa->save();
+            }
+        }
+
+        // Agregar mensaje de log
+        error_log('Mesas asignadas correctamente para la elección ' . $cod_eleccion);
+
+        return response()->json(['message' => 'Mesas asignadas correctamente']);
+    } catch (\Exception $e) {
+        // Manejo de errores, puedes registrar el error o devolver un mensaje específico
+        return response()->json(['error' => 'Error durante la asignación de mesas: ' . $e->getMessage()], 500);
+    }
+}
+
+
+    public function asignarMesasPorCarrera0502($cod_eleccion)
 {
     $carreras = EleccionesFacCarr::where('COD_ELECCION', $cod_eleccion)->get();
 
@@ -134,6 +216,8 @@ class MesasController extends Controller
         }
         return response()->json(['message' => 'Mesas asignadas correctamente']);
     }
+
+
 
 
     public function asignarMesasPorCarreraPrueva($cod_eleccion)
