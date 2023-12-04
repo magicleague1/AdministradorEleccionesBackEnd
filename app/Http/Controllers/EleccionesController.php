@@ -53,8 +53,8 @@ class EleccionesController extends Controller
         if ($motivo_eleccion === 'universitaria') {
             // Obtener todas las facultades y sus carreras
             $facultadesYCarreras = DB::table('facultad')
-                ->join('Carrera', 'Facultad.COD_FACULTAD', '=', 'Carrera.COD_FACULTAD')
-                ->select('Facultad.COD_FACULTAD as cod_facultad', 'Carrera.COD_CARRERA as cod_carrera')
+                ->join('carrera', 'facultad.COD_FACULTAD', '=', 'carrera.COD_FACULTAD')
+                ->select('facultad.COD_FACULTAD as cod_facultad', 'carrera.COD_CARRERA as cod_carrera')
                 ->get();
 
             // Insertar en la tabla EleccionesFacCarr
@@ -67,7 +67,7 @@ class EleccionesController extends Controller
             }
         } elseif ($motivo_eleccion === 'facultativa') {
             // Obtener las carreras de una facultad específica
-            $carrerasFacultad = DB::table('Carrera')
+            $carrerasFacultad = DB::table('carrera')
                 ->where('COD_FACULTAD', $cod_facultad)
                 ->select('COD_CARRERA as cod_carrera')
                 ->get();
