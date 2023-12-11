@@ -28,4 +28,10 @@ class Elecciones extends Model
     {
         return $this->belongsTo(Frente::class, 'COD_FRENTE');
     }
+
+  
+    public function jurados()
+    {
+        return $this->hasManyThrough(Jurado::class, Mesas::class,'COD_ELECCION','COD_MESA');
+    }
 }

@@ -11,6 +11,7 @@ use App\Models\AsociarTitularSuplente;
 use App\Models\EleccionesFacCarr;
 use Illuminate\Support\Facades\DB;
 
+use App\Notifications\NotificacionModelo;
 
 
 class ComiteElectoralController extends Controller
@@ -135,4 +136,13 @@ class ComiteElectoralController extends Controller
         }
     }
 
+    public function enviarMensaje(Request $request){
+        $poblacion=Poblacion::where('EMAIL',$request->to)->get();
+      
+        if($poblacion){
+           $poblacion[0]->notify(new NotificacionModelo($request->mensaje));
+        }
+
+        return response()->json(['message' => 'Mensaje enviado exitosamene']);
+    }
 }

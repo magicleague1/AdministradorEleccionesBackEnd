@@ -15,6 +15,8 @@ use App\Http\Controllers\PublicarConvocatoriaController;
 use App\Http\Controllers\EleccionesFrenteController;
 use App\Http\Controllers\CandidatoController;
 use App\Http\Controllers\PermisoController;
+use App\Http\Controllers\JuradoController;
+use App\Http\Controllers\ComiteElectoralController;
 
 // Otras rutas...
 
@@ -327,3 +329,13 @@ Route::get('/buscarCarnet/{carnetIdentidad}', [CandidatoController::class, 'busc
 
 
 Route::post('/actualizarCandidato', [CandidatoController::class, 'actualizarCandidato']);
+
+
+//---------------------- Jurados--------------------------------------------
+Route::get('/jurado',[JuradoController::class,'index'] );
+Route::post('mesa/{id}/jurado',[JuradoController::class,'store'] );
+Route::put('/jurado/{id}',[JuradoController::class,'update'] );
+
+//-----------------------Email----------------------------------------------
+Route::post('/mensajeComiteElectoral',[ComiteElectoralController::class,'enviarMensaje']);
+Route::post('/mensajePoblacion',[PoblacionController::class,'envioMasivoMensaje']);
