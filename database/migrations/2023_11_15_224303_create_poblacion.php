@@ -21,6 +21,7 @@ class CreatePoblacion extends Migration
             $table->tinyInteger('ESTUDIANTE')->nullable();
             $table->tinyInteger('DOCENTE')->nullable();
             $table->char('APELLIDO', 40);
+            $table->string('EMAIL',30)->nullable();
 
             // Añadir índice único para CODSIS si es necesario
             // $table->unique('CODSIS');

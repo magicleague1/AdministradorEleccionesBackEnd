@@ -9,6 +9,9 @@ use App\Models\Elecciones;
 use App\Models\EleccionesFacCarr;
 use Illuminate\Support\Facades\DB;
 
+use App\Notifications\NotificacionModelo;
+use Illuminate\Support\Facades\Notification;
+
 class PoblacionController extends Controller
 {
 
@@ -107,5 +110,13 @@ class PoblacionController extends Controller
         // Puedes agregar lógica adicional si es necesario
 
         return response()->json(['message' => 'Datos registrados en la tabla asociar_titularSuplente']);
+    }
+
+    public function envioMasivoMensaje(Request $request){
+        
+        $poblacion=Poblacion::all();
+        Notification::send($poblacion, new NotificacionModelo($request->mensaje));
+    
+        return response()->json(['message' => 'Mensajes enviados exitosamene']);
     }
 }

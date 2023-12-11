@@ -24,7 +24,7 @@ class Mesas extends Model
     // Si hay relaciones, se pueden definir aquí
     // Por ejemplo, relación con la tabla Elecciones, Facultad, Carrera, etc.
     // Ejemplo:
-    /*
+    
     public function eleccion()
     {
         return $this->belongsTo(Elecciones::class, 'COD_ELECCION', 'COD_ELECCION');
@@ -39,5 +39,9 @@ class Mesas extends Model
     {
         return $this->belongsTo(Carrera::class, 'COD_CARRERA', 'COD_CARRERA');
     }
-    */
+    
+    public function jurados()
+    {
+        return $this->hasMany(Jurado::class, 'COD_MESA', 'COD_MESA');
+    }
 }
