@@ -41,7 +41,7 @@ class AsociarTitularSuplenteController extends Controller
             ->where('asociartitularsuplente.COD_COMITE', $idComite)
             ->where('asociartitularsuplente.COD_TITULAR_SUPLENTE', "1")
             ->get();
-    
+
         // Consulta para los suplentes (codTitular_Suplente = 2)
         $suplentes = DB::table('asociartitularsuplente')
             ->join('poblacion', 'asociartitularsuplente.COD_SIS', '=', 'poblacion.CODSIS')
@@ -55,11 +55,11 @@ class AsociarTitularSuplenteController extends Controller
             ->where('asociartitularsuplente.COD_COMITE', $idComite)
             ->where('asociartitularsuplente.COD_TITULAR_SUPLENTE', "2")
             ->get();
-    
+
         // Devuelve una respuesta JSON con los datos
         return response()->json(['titulares' => $titulares, 'suplentes' => $suplentes]);
     }
-    
+
 
     public function verificarExistenciaComite($codComite)
 {
@@ -117,16 +117,41 @@ public function verListaComiteConID($idComite)
 public function actualizarDatos(Request $request)
 {
 
-    $request->validate([
-        'cod_sis_nuevo' => 'required',
-    ]);
+
     $codComiteActual = $request->input('cod_comite_actual');
     $codSisActual = $request->input('cod_sis_actual');
-    $codSisNuevo = $request->input('cod_sis_nuevo');
+
+
+    $permiso = DB::table('permisos')
+    ->where('cod_sis', $codSisActual)
+    ->where('cod_comite', $codComiteActual)
+    ->first();
+
+if ($permiso == null) {
+
+    abort(403, 'No tienes permiso para acceder a esta área.');
+}
+
+    $tipo_usuario = $permiso->tipo_usuario;
+    $codSisActual = $permiso->cod_sis;
+
+
+
+    $poblacion = DB::table('poblacion')
+    ->inRandomOrder()
+    ->where('estudiante', $tipo_usuario == 'estudiante' ? 1 : 0)
+    ->where('docente', $tipo_usuario == 'docente' ? 1 : 0)
+    ->first();
+
+
+
+
+    $codSisRandom = $poblacion->CODSIS;
+    //return response()->json(['existeComite' => $codSisRandom]);
 
 
     $existeAsignacion = DB::table('asociartitularsuplente')
-    ->where('COD_SIS', $codSisNuevo)
+    ->where('COD_SIS', $codSisRandom)
     ->exists();
 
     if ($existeAsignacion) {
@@ -141,7 +166,7 @@ public function actualizarDatos(Request $request)
 
     // Actualizar el campo codcomite en la tabla poblacion
     DB::table('poblacion')
-    ->where('codsis', $codSisNuevo)
+    ->where('codsis', $codSisRandom)
     ->update(['codcomite' => $codComiteActual]);
 
 
@@ -149,10 +174,11 @@ public function actualizarDatos(Request $request)
     DB::table('asociartitularsuplente')
         ->where('COD_COMITE', $codComiteActual)
         ->where('COD_SIS', $codSisActual)
-        ->update(['COD_SIS' => $codSisNuevo]);
+        ->update(['COD_SIS' => $codSisRandom]);
 
     return response()->json(['message' => 'Datos actualizados correctamente']);
 }
+
 
 
 
