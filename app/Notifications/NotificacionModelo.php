@@ -43,7 +43,7 @@ class NotificacionModelo extends Notification
     public function toMail($notifiable)
     {
         return (new MailMessage)
-                    ->from('magicleaguesoftwaresolutions@gmail.com', 'Magic league')
+                    ->from('TEU@umss.edu', 'Tribunal Electoral Universitario UMSS')
                     ->subject("Notificación")
                     ->greeting("Sistema de gestión de elecciones")
                     ->line($this->mensaje);

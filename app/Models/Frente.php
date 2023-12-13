@@ -16,7 +16,7 @@ class Frente extends Model
 
     
     public function eleccion(){
-        return $this->hasMany(Eleccion::class, 'COD_ELECCION');
+        return $this->hasMany(Elecciones::class, 'COD_ELECCION');
     }
 
     public function candidato(){
