@@ -30,17 +30,136 @@ class JuradoController extends Controller
      * @return \Illuminate\Http\Response
      */
     //juradoRequest
-    public function store(Request $request,$cod_mesa)
+    public function store(Request $request, $cod_mesa)
     {   
-        $poblacion=Poblacion::all();
+        $poblacion = Poblacion::all();
         $mesa=Mesas::find($cod_mesa)->NUM_MESA;
-       
+    
         [$docentes, $estudiantes] = $poblacion->partition(function ($usuario) {
         return $usuario->DOCENTE;
         });
         
-        $docentes=$docentes->random(2);
-        $estudiantes=$estudiantes->random(2);
+        //para presidente de mesa
+        $presidenteMesa = $docentes->random();
+        $this->crearJurado($presidenteMesa, $cod_mesa, "PRESIDENTE DE MESA", $mesa);
+
+        //docentes(titulares y suplentes)
+        $docentesTitulares = $docentes->random(2);
+        $docentesSuplentes = $docentes->reject(function ($docente) use ($docentesTitulares) {
+            return $docentesTitulares -> contains('CODSIS', $docente->CODSIS);
+        })->random(2);
+
+        foreach ($docentesTitulares as $docente) {
+            $this->crearJurado($docente, $cod_mesa, "DOCENTE TITULAR", $mesa);
+        }
+
+        foreach ($docentesSuplentes as $docente) {
+            $this->crearJurado($docente, $cod_mesa, "DOCENTE SUPLENTE", $mesa);
+        }
+
+        //para estudiantes(titulares y suplentes)
+        $estudiantesTitulares = $estudiantes->random(2);
+        $estudiantesSuplentes = $estudiantes->reject(function ($estudiante) use ($estudiantesTitulares) {
+            return $estudiantesTitulares->contains('CODSIS', $estudiante->CODSIS);
+        })->random(2);
+
+        foreach ($estudiantesTitulares as $estudiante) {
+            $this->crearJurado($estudiante, $cod_mesa, "ESTUDIANTE TITULAR", $mesa);
+        }
+
+        foreach ($estudiantesSuplentes as $estudiante) {
+            $this->crearJurado($estudiante, $cod_mesa, "ESTUDIANTE SUPLENTE", $mesa);
+        }
+
+        return response()->json(['message' => 'Datos registrados en la tabla Jurados']);
+    }
+
+
+    private function crearJurado($persona, $cod_mesa, $cargo)
+    {
+        $existeJurado = Jurado::where('COD_SIS', $persona->CODSIS)
+            ->where('COD_MESA', $cod_mesa)
+            ->exists();
+
+        if (!$existeJurado) {
+            $jurado = new Jurado;
+            $jurado->COD_SIS = $persona->CODSIS;
+            $jurado->CARGO_JURADO = $cargo;
+            $jurado->COD_MESA = $cod_mesa;
+            $jurado->save();
+
+            if ($persona->EMAIL != NULL) {
+                $mensaje = "TRIBUNAL ELECTORAL UNIVERSITARIO informa: \n
+                    Usted ha sido elegido como jurado electoral  \n
+                    como:$cargo \n
+                    De la mesa Nro. $cod_mesa.";
+                $persona->notify(new NotificacionModelo($mensaje));
+            }
+        }
+    }
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function show($id)
+    {
+        //
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function update($id)
+    {
+        $jurado = Jurado::find($id);
+        $mesa = $jurado->mesa;
+        $jurados_de_eleccion = $mesa->eleccion->jurados;
+
+        $poblacion = $jurado->poblacion->ESTUDIANTE ? Poblacion::where('ESTUDIANTE', 1)->get() : Poblacion::where('DOCENTE', 1)->get();
+
+        $poblacionFiltrada = $poblacion->reject(function ($value, $key) use ($jurados_de_eleccion) {
+            return $jurados_de_eleccion->contains('COD_SIS', $value->CODSIS);
+        });
+
+        $nuevoJurado = $poblacionFiltrada->random();
+
+        $jurado->delete();
+
+        $existeJurado = Jurado::where('COD_SIS', $nuevoJurado->CODSIS)
+            ->where('COD_MESA', $mesa->COD_MESA)
+            ->exists();
+
+        if (!$existeJurado) {
+            $this->crearJurado($nuevoJurado, $mesa->COD_MESA, $jurado->CARGO_JURADO);
+            return response()->json(['message' => 'Datos registrados en la tabla Jurados']);
+        } else {
+
+            return response()->json(['error' => 'El nuevo jurado ya existe en la mesa.']);
+        }
+    }
+
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy($id)
+    {
+        //
+    }
+
+
+    //--------------------------------------Pruebas--------------------------------------------------------------
+            /*$docentes=$docentes->random(5);
+        $estudiantes=$estudiantes->random(4);
 
         foreach ($docentes as $key=>$docente) {
             $jurado=new Jurado;
@@ -74,7 +193,7 @@ class JuradoController extends Controller
             $jurado->COD_MESA=$cod_mesa;
 
             $jurado->save();
-                 
+            
             if($estudiante->EMAIL!=NULL){
                 $estudiante->notify(new NotificacionModelo("Usted fue eligido como Jurado electoral, Mesa Nro ".$mesa));
             }
@@ -82,69 +201,36 @@ class JuradoController extends Controller
         }
 
         return response()->json(['message' => 'Datos registrados en la tabla Jurados']);
-    }
+    }*/
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
+    /*public function store(Request $request, $cod_mesa)
     {
-        //
-    }
+        $mesa = Mesas::find($cod_mesa);
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update($id)
-    {
-        $jurado=Jurado::find($id);
-        $mesa=$jurado->mesa;
-        $jurados_de_eleccion=$mesa->eleccion->jurados;
+        $apellidosEstudiantes = explode(',', $mesa->APELLIDOS_ESTUDIANTES);
 
+        $estudiantes = Poblacion::whereIn('APELLIDOS', $apellidosEstudiantes)
+            ->where('ESTUDIANTE', 1)
+            ->get();
 
-        
-        $poblacion=[];
-        if($jurado->poblacion->ESTUDIANTE){
-            $poblacion=Poblacion::where('ESTUDIANTE',1)->get();
-        }else{
-            $poblacion=Poblacion::where('DOCENTE',1)->get();
+        if ($estudiantes->count() < 9) {
+            return response()->json(['error' => 'No hay suficientes estudiantes para seleccionar jurados.']);
         }
 
-        $poblacionFiltrada = $poblacion->reject(function ($value, $key) use($jurados_de_eleccion){
-            return $jurados_de_eleccion->contains('COD_SIS',$value->CODSIS);
-        });
+        $juradosEstudiantes = $estudiantes->random(9);
 
-        $nuevoJurado=$poblacionFiltrada->random();
-        
-        $jurado->COD_SIS=$nuevoJurado->CODSIS;
-        $jurado->save();
-
-        if($nuevoJurado->EMAIL){
-            if($jurado->CARGO_JURADO=="JURADO"){
-                $nuevoJurado->notify(new NotificacionModelo("Usted fue eligido como Jurado electoral, Mesa Nro ".$mesa));
-            }else{
-                $nuevoJurado->notify(new NotificacionModelo("Usted fue eligido como Jurado electoral y es Presidente de mesa, Mesa Nro ".$mesa));
-            }
+        foreach ($juradosEstudiantes as $estudiante) {
+            $this->crearJurado($estudiante, $cod_mesa, "ESTUDIANTE");
         }
-        
+
+        $docentes = Poblacion::where('DOCENTE', 1)->get();
+
+        $juradosDocentes = $docentes->random(5);
+
+        foreach ($juradosDocentes as $docente) {
+            $this->crearJurado($docente, $cod_mesa, "DOCENTE");
+        }
+
         return response()->json(['message' => 'Datos registrados en la tabla Jurados']);
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
-    }
+    }*/
 }
