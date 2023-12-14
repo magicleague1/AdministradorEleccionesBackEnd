@@ -9,6 +9,10 @@ use App\Models\Eleccion;
 use App\Models\AsociarTitularSuplente;
 use Illuminate\Support\Facades\DB;
 
+use App\Models\Elecciones;
+use App\Notifications\NotificacionModelo;
+use Illuminate\Support\Facades\Notification;
+
 class AsociarTitularSuplenteController extends Controller
 {
     public function store(Request $request)
@@ -179,7 +183,58 @@ if ($permiso == null) {
     return response()->json(['message' => 'Datos actualizados correctamente']);
 }
 
+    public function enviarNotificacion(Request $idComite) 
+    {
+        // Filtrar registros con codTitular_Suplente = 1
+        $titulares = DB::table('asociartitularsuplente')
+        ->join('poblacion', 'asociartitularsuplente.COD_SIS', '=', 'poblacion.CODSIS')
+        ->select(
+            'poblacion.CARNETIDENTIDAD',
+            'poblacion.NOMBRE',
+            'poblacion.APELLIDO',
+            'poblacion.ESTUDIANTE',
+            'poblacion.DOCENTE'
+        )
+        ->where('asociartitularsuplente.COD_COMITE', $idComite)
+        ->where('asociartitularsuplente.COD_TITULAR_SUPLENTE', "1")
+        ->get();
 
+        // Consulta para los suplentes (codTitular_Suplente = 2)
+        $suplentes = DB::table('asociartitularsuplente')
+            ->join('poblacion', 'asociartitularsuplente.COD_SIS', '=', 'poblacion.CODSIS')
+            ->select(
+                'poblacion.CARNETIDENTIDAD',
+                'poblacion.NOMBRE',
+                'poblacion.APELLIDO',
+                'poblacion.ESTUDIANTE', 
+                'poblacion.DOCENTE' 
+            )
+            ->where('asociartitularsuplente.COD_COMITE', $idComite)
+            ->where('asociartitularsuplente.COD_TITULAR_SUPLENTE', "2")
+            ->get();
 
+            foreach($titulares as $titular) {
+                $this->enviarMensajeMiembroComite($titular, 'Titular');
+            }
+
+            foreach($suplentes as $suplente) {
+                $this->enviarMensajeMiembroComite($suplente, 'Suplente');
+            }
+
+            return response()->json(['message' => 'Se ha notificado a los miembrs del comité electoral.']);
+    }
+
+    private function enviarMensajeMiembroComite($miembro, $cargo)
+    {
+        $eleccion = Elecciones::where('COD_COMITE', $miembro->COD_COMITE)->first();
+
+        $mensaje = "TRIBUNAL ELECTORAL UNIVERSITARIO informa: \n"
+        . "Usted ha sido elegido como miembro de comité electoral\n"
+        . "Como $cargo. \n"
+        . "Para el proceso electoral con motivo de la elección de: {$eleccion->motivo_eleccion}. \n"
+        . "Que se llevará a cabo el día: {$eleccion->fecha_eleccion}.";
+
+        Notification::send($miembro, new NotificacionModelo($mensaje));
+    }
 
 }
