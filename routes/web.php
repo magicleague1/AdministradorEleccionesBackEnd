@@ -17,6 +17,7 @@ use App\Http\Controllers\CandidatoController;
 use App\Http\Controllers\PermisoController;
 use App\Http\Controllers\JuradoController;
 use App\Http\Controllers\ComiteElectoralController;
+use App\Models\AsociarTitularSuplente;
 
 // Otras rutas...
 
@@ -337,5 +338,5 @@ Route::post('mesa/{id}/jurado',[JuradoController::class,'store'] );
 Route::put('/jurado/{id}',[JuradoController::class,'update'] );
 
 //-----------------------Email----------------------------------------------
-Route::post('/mensajeComiteElectoral',[ComiteElectoralController::class,'enviarMensaje']);
+Route::post('/mensajeComiteElectoral/{$COD_COMITE}',[AsociarTitularSuplente::class,'enviarNotificacion']);
 Route::post('/mensajePoblacion',[PoblacionController::class,'envioMasivoMensaje']);
