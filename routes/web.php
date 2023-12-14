@@ -18,6 +18,7 @@ use App\Http\Controllers\PermisoController;
 use App\Http\Controllers\JuradoController;
 use App\Http\Controllers\ComiteElectoralController;
 
+
 // Otras rutas...
 
 
@@ -175,7 +176,8 @@ Route::get('/getFrentesByEleccion/{cod_eleccion}', [FrenteController::class, 'ge
 Route::get('/frentesyCandidatos', [FrenteController::class, 'listarFrentesYCandidatos'])->name('frente.candidatos');
 
 //Asignar Candidatos al frente
-Route::post('frentes/asignarCandidatos', [CandidatoController::class, 'asignarCandidatoAFrente']);
+Route::post('/frentes/asignarCandidatos', [CandidatoController::class, 'asignarCandidatoAFrente']);
+Route::post('/frentes/reasignarCandidato/{idCandidatoExistente}', [CandidatoController::class, 'reasignarCandidato']);
 
 //Asignar Frente a Proceso electoral
 Route::post('frentes/asignarFrenteAEleccion', [EleccionesController::class, 'asignarFrente']);
@@ -338,4 +340,3 @@ Route::put('/jurado/{id}',[JuradoController::class,'update'] );
 
 //-----------------------Email----------------------------------------------
 Route::post('/mensajeComiteElectoral',[ComiteElectoralController::class,'enviarMensaje']);
-Route::post('/mensajePoblacion',[PoblacionController::class,'envioMasivoMensaje']);

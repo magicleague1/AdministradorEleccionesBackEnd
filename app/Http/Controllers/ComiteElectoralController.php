@@ -16,14 +16,7 @@ use App\Notifications\NotificacionModelo;
 
 class ComiteElectoralController extends Controller
 {
-
-
-
-
     public function asignarComite(Request $request,$COD_ELECCION) {
-
-
-
         // Obtén la información de la elección
         //$eleccion = Elecciones::where('COD_ELECCION', $COD_ELECCION)->first();
 
@@ -138,9 +131,9 @@ class ComiteElectoralController extends Controller
 
     public function enviarMensaje(Request $request){
         $poblacion=Poblacion::where('EMAIL',$request->to)->get();
-      
+    
         if($poblacion){
-           $poblacion[0]->notify(new NotificacionModelo($request->mensaje));
+            $poblacion[0]->notify(new NotificacionModelo($request->mensaje));
         }
 
         return response()->json(['message' => 'Mensaje enviado exitosamene']);

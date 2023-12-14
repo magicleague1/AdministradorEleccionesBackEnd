@@ -10,6 +10,9 @@ use App\Models\EleccionesFacCarr;
 use App\Models\EleccionesFrente;
 use App\Models\Facultad;
 use App\Models\Carrera;
+use App\Notifications\NotificacionModelo;
+use App\Models\Poblacion;
+use Illuminate\Support\Facades\Notification;
 
 use Illuminate\Support\Facades\DB;
 
@@ -95,6 +98,19 @@ class EleccionesController extends Controller
             $eleccionFacCarr->save();
         }
 
+        $poblacion = Poblacion::all();
+
+        if(!$poblacion->isEmpty()) {
+            $mensaje = "TRIBUNAL ELECTORAL UNIVERSITARIO informa: \n"
+                    . "Nuevo proceso electoral con motivo de elección de: $motivo_eleccion. \n"
+                    . "Tipo de proceso electoral: $tipo_eleccion. \n"
+                    . "Que se llevará a cabo la fecha: $fecha_eleccion. \n"
+                    . "Con motivo de la elección de: $motivo_eleccion. \n"
+                    . "La convocatoria está abierta a partir de $fecha_ini_convocatoria \n"
+                    . "y finaliza en $fecha_fin_convocatoria.";
+            $this->envioMasivoMensaje($mensaje);
+        }
+
         return "La elección se ha creado correctamente.";
     }
 
@@ -144,4 +160,13 @@ class EleccionesController extends Controller
 
         return response()->json(['message' => 'Frente asignado al proceso electoral correctamente.']);
     }
+
+    //envio de emails
+    public function envioMasivoMensaje($mensaje)
+{
+    $poblacion = Poblacion::all();
+    Notification::send($poblacion, new NotificacionModelo($mensaje));
+    
+    return response()->json(['message' => 'Mensajes enviados exitosamente']);
+}
 }

@@ -45,28 +45,57 @@ class CandidatoController extends Controller
     }
 
     public function buscarCarnet($carnetIdentidad)
-{
+    {
     $carnetExiste = Poblacion::where('carnetidentidad', $carnetIdentidad)->exists();
     
     return response()->json($carnetExiste);
-}
-
-
-public function actualizarCandidato(Request $request)
-{
-    $candidato = Candidato::find($request->COD_CANDIDATO);
-
-    if ($candidato) {
-        $candidato->COD_CARNETIDENTIDAD = $request->CARNET_IDENTIDAD;
-        $candidato->CARGO_POSTULADO = $request->CARGO;
-        // Aquí puedes agregar más campos que se actualicen
-
-        $candidato->save();
-
-        return response()->json(['message' => 'Candidato actualizado correctamente']);
-    } else {
-        return response()->json(['error' => 'No se encontró el candidato'], 404);
     }
-}
+
+
+    public function actualizarCandidato(Request $request)
+    {
+        $candidato = Candidato::find($request->COD_CANDIDATO);
+
+        if ($candidato) {
+            $candidato->COD_CARNETIDENTIDAD = $request->CARNET_IDENTIDAD;
+            $candidato->CARGO_POSTULADO = $request->CARGO;
+            // Aquí puedes agregar más campos que se actualicen
+
+            $candidato->save();
+
+            return response()->json(['message' => 'Candidato actualizado correctamente']);
+        } else {
+            return response()->json(['error' => 'No se encontró el candidato'], 404);
+        }
+    }
+
+    public function reasignarCandidato(Request $request, $idCandidatoExistente)
+    {
+        $frenteId = $request->COD_FRENTE;
+        $ciNuevoCandidato = $request->input('CARNETIDENTIDAD');
+        $cargoPostulado = $request->input('CARGO_POSTULADO');
+        
+        $candidatoExistente = Candidato::find($idCandidatoExistente);
+
+        if ($candidatoExistente) {
+            $candidatoExistente->HABILITADO = 0;
+            $candidatoExistente->save();
+        }
+
+        $nuevoIdCandidato = mt_rand(10000, 99999);
+
+
+        $nuevoCandidato = new Candidato;
+        $nuevoCandidato->COD_CANDIDATO = $nuevoIdCandidato;
+        $nuevoCandidato->COD_CARNETIDENTIDAD = $ciNuevoCandidato;
+        $nuevoCandidato->CARGO_POSTULADO = $cargoPostulado;
+        $nuevoCandidato->HABILITADO = 1;
+        $nuevoCandidato->COD_FRENTE = $frenteId; 
+
+
+        $nuevoCandidato->save();
+
+        return response()->json(['success', 'Candidato reasignado correctamente.']);
+    }
 
 }

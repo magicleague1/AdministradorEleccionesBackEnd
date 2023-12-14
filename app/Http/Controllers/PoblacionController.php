@@ -94,6 +94,8 @@ class PoblacionController extends Controller
             ]);
 
             //return response()->json($element);
+
+            $this->enviarMensajeMiembroComite($element, 'Titular');
         }
 
         // Asignar codTitular_Suplente = 2 a los elementos de $array2
@@ -103,6 +105,8 @@ class PoblacionController extends Controller
                 'COD_COMITE' => $COD_COMITE,
                 'COD_TITULAR_SUPLENTE' => "2"
             ]);
+
+            $this->enviarMensajeMiembroComite($element, 'Suplente');
         }
 
 
@@ -112,11 +116,15 @@ class PoblacionController extends Controller
         return response()->json(['message' => 'Datos registrados en la tabla asociar_titularSuplente']);
     }
 
-    public function envioMasivoMensaje(Request $request){
-        
-        $poblacion=Poblacion::all();
-        Notification::send($poblacion, new NotificacionModelo($request->mensaje));
-    
-        return response()->json(['message' => 'Mensajes enviados exitosamene']);
+    public function enviarMensajeMiembroComite($miembro, $cargo){
+        $eleccion = Elecciones::where('COD_COMITE', $miembro->COD_COMITE)->first();
+
+        $mensaje = "TRIBUNAL ELECTORAL UNIVERSITARIO informa: \n"
+        . "Usted ha sido elegido como miembro de comité electoral\n"
+        . "Como $cargo. \n"
+        . "Para el proceso electoral con motivo de la elección de: {$eleccion->motivo_eleccion}. \n"
+        . "Que se llevará a cabo el día: {$eleccion->fecha_eleccion}.";
+
+        Notification::send($miembro, new NotificacionModelo($mensaje));
     }
 }

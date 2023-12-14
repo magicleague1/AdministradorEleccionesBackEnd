@@ -76,12 +76,22 @@ class JuradoController extends Controller
 
 
     private function crearJurado($persona, $cod_mesa, $cargo)
-    {
-        $existeJurado = Jurado::where('COD_SIS', $persona->CODSIS)
-            ->where('COD_MESA', $cod_mesa)
-            ->exists();
+{
+    $existeJurado = Jurado::where('COD_SIS', $persona->CODSIS)
+        ->where('COD_MESA', $cod_mesa)
+        ->exists();
 
-        if (!$existeJurado) {
+    if (!$existeJurado) {
+        // Obtén la mesa y la elección asociada
+        $mesa = Mesas::with('eleccion')->find($cod_mesa);
+
+        // Asegúrate de que la mesa existe y tiene una elección asociada
+        if ($mesa && $mesa->eleccion) {
+            // Accede al motivo de la elección
+            $motivoEleccion = $mesa->eleccion->MOTIVO_ELECCION;
+            $fechaEleccion = $mesa->eleccion->FECHA_ELECCION;
+
+            // Crea el jurado
             $jurado = new Jurado;
             $jurado->COD_SIS = $persona->CODSIS;
             $jurado->CARGO_JURADO = $cargo;
@@ -89,14 +99,18 @@ class JuradoController extends Controller
             $jurado->save();
 
             if ($persona->EMAIL != NULL) {
-                $mensaje = "TRIBUNAL ELECTORAL UNIVERSITARIO informa: \n
-                    Usted ha sido elegido como jurado electoral  \n
-                    como:$cargo \n
-                    De la mesa Nro. $cod_mesa.";
+                $mensaje = "TRIBUNAL ELECTORAL UNIVERSITARIO informa: \n"
+                    . "Usted ha sido elegido como jurado electoral\n"
+                    . "como: $cargo\n"
+                    . "de la mesa Nro. $cod_mesa.\n"
+                    . "Con motivo de la elección de: $motivoEleccion. \n"
+                    . "que se llevará a cabo la fecha de la elección: $fechaEleccion.";
+
                 $persona->notify(new NotificacionModelo($mensaje));
             }
         }
     }
+}
     /**
      * Display the specified resource.
      *
