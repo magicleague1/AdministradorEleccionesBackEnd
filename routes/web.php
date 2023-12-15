@@ -33,9 +33,6 @@ use App\Models\AsociarTitularSuplente;
 |
 */
 
-Route::get('/',function(){
-    return "holamundo";
-});
 
 //Route::get('/verificarAdministrador',[App\Http\Controllers\AdministradorController::class,"index"]);
 Route::get('/verificarAdministradorall', [AdministradorController::class,'index']);

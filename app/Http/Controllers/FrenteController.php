@@ -65,7 +65,11 @@ class FrenteController extends Controller
 
         // Obtiene el archivo de imagen y genera un nombre único para el logo
         $logo = $request->file('LOGO');
-        $nombreLogo = "null";
+        
+        //$nombreLogo="null";
+        $nombreLogo = uniqid() . '-' . $logo->getClientOriginalName();
+       
+        $logo->storeAs('public/logos', $nombreLogo);
 
         try {
             // Intenta crear y guardar el frente político
@@ -153,7 +157,7 @@ class FrenteController extends Controller
         $request->validate([
             'NOMBRE_FRENTE' => 'required|string|min:2|max:30',
             'SIGLA_FRENTE' => 'required|string|min:2|max:15',
-            //'LOGO' => 'image|mimes:jpeg,png,jpg|max:2048',
+            'LOGO' => 'image|mimes:jpeg,png,jpg|max:2048',
             'COD_CARRERA' => 'required',
         ]);
 
@@ -168,19 +172,20 @@ class FrenteController extends Controller
         $frente -> SIGLA_FRENTE = $request->input('SIGLA_FRENTE');
         $frente -> COD_CARRERA = $request->input('COD_CARRERA');
 
-        /*if ($request->hasFile('LOGO')) {
+        if ($request->hasFile('LOGO')) {
             // Elimina el logo anterior
-            Storage::delete('public/logos/' . $frente->LOGO);
-
+            Storage::delete('logos/' . $frente->LOGO);
+            
             // Sube y guarda el nuevo logo
             $logo = $request->file('LOGO');
             $nombreLogo = uniqid() . '-' . $logo->getClientOriginalName();
             $logo->storeAs('public/logos', $nombreLogo);
 
             $frente->LOGO = $nombreLogo;
-        }*/
+        }
 
         $frente -> save();
+
         return response()->json(['message' => 'Frente actualizado correctamente']);
     }
 
