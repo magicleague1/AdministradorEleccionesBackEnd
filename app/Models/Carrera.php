@@ -8,6 +8,7 @@ class Carrera extends Model
 {
     protected $table = 'carrera';
     protected $primaryKey = 'COD_CARRERA';
+    public $timestamps = false;
 
     protected $fillable = [
         'COD_FACULTAD',

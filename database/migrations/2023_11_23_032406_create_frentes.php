@@ -22,7 +22,7 @@ class CreateFrentes extends Migration
             $table->string('LOGO');
             $table->unsignedBigInteger('COD_MOTIVO')->nullable();
             $table->integer('COD_CARRERA')->nullable();
-            $table->integer('COD_ELECCION');
+            $table->integer('COD_ELECCION')->nullable();;
             $table->timestamps();
         });
     }

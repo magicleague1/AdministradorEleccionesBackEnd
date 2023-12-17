@@ -25,7 +25,6 @@ class CreateElecciones extends Migration
             $table->date('FECHA_INI_CONVOCATORIA');
             $table->date('FECHA_FIN_CONVOCATORIA');
             $table->boolean('ELECCION_ACTIVA')->default(1);
-            $table->timestamps();
         });
     }
 

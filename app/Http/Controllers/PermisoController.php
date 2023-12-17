@@ -27,56 +27,55 @@ class PermisoController extends Controller
 
     public function agregarPermiso(Request $request)
     {
-        // Validación de datos
-        $request->validate([
-            'cod_sis' => 'required',
-            'motivo' => 'required',
-            'cod_comite' => 'required',
-            'comprobante_entregado' => 'required|boolean',
-            // ... (otras reglas de validación según tus necesidades)
-        ]);
+        try {
+            // Validación de datos
+            $request->validate([
+                'cod_sis' => 'required',
+                'cod_comite' => 'required',
+                'motivo' => 'required',
+                // ... (otras reglas de validación según tus necesidades)
+            ]);
 
-        // Verificar si el cod_sis existe en la población y está asociado al comité
-       
-        // Obtener la fecha actual
-    $fechaActual = now();
+            // Obtener la fecha actual
+            $fechaActual = now();
 
-        // Obtener la fecha de la elección
-       
+            // Calcular la fecha de fin de solicitud (24 horas después)
+            $fechaFinSolicitud = Carbon::parse($fechaActual)->addDay();
 
-        // Calcular la fecha de fin de solicitud (24 horas después)
-        $fechaFinSolicitud = Carbon::parse($fechaActual)->addDay()->format('Y-m-d H:i:s');
+            // Obtener el tipo de usuario (estudiante o docente) desde la tabla poblacion
+            $tipoUsuario = Poblacion::where('codsis', $request->input('cod_sis'))
+                ->where('codcomite', $request->input('cod_comite'))
+                ->value(DB::raw('CASE WHEN estudiante = 1 THEN "estudiante" WHEN docente = 1 THEN "docente" ELSE null END'));
 
-        // Obtener el tipo de usuario (estudiante o docente) desde la tabla poblacion
-        $tipoUsuario = Poblacion::where('codsis', $request->input('cod_sis'))
-        ->where('codcomite', $request->input('cod_comite'))
-        ->value(DB::raw('CASE WHEN estudiante = 1 THEN "estudiante" WHEN docente = 1 THEN "docente" ELSE null END'));
+            // Validar que se obtenga un tipo de usuario válido
+            if (!$tipoUsuario) {
+                return response()->json(['error' => 'Tipo de usuario no válido en la tabla poblacion'], 500);
+            }
 
-        // Validar que se obtenga un tipo de usuario válido
-        if (!$tipoUsuario) {
-            return response()->json(['error' => 'Tipo de usuario no válido en la tabla poblacion'], 500);
+            // Crear nuevo permiso
+            $permiso = Permiso::create([
+                'cod_sis' => $request->input('cod_sis'),
+                'motivo' => $request->input('motivo'),
+                'cod_comite' => $request->input('cod_comite'),
+                'comprobante_entregado' => $request->input('comprobante_entregado'),
+                'fecha_solicitud' => $fechaActual, // Fecha de la elección
+                'fecha_fin_solicitud' => $fechaFinSolicitud, // 24 horas después
+                'fecha_permiso' => now(), // Fecha actual
+                'estado' => 'entregado_con_retraso',
+                'codsis_sustituto' => null,
+                'fecha_comprobante_entregado' => null,
+                'tipo_usuario' => $tipoUsuario, // Agregar el tipo de usuario
+                // ... (otros campos según tus necesidades)
+            ]);
+
+            return response()->json(['message' => 'Permiso agregado correctamente', 'data' => $permiso], 201);
+        } catch (\Exception $e) {
+            // Manejar cualquier excepción y devolver una respuesta 500 con un mensaje descriptivo
+            return response()->json(['error' => $e->getMessage()], 500);
         }
-
-        // Crear nuevo permiso
-        $permiso = Permiso::create([
-            'cod_sis' => $request->input('cod_sis'),
-            'motivo' => $request->input('motivo'),
-            'cod_comite' => $request->input('cod_comite'),
-            'comprobante_entregado' => $request->input('comprobante_entregado'),
-            'fecha_solicitud' => $fechaActual, // Fecha de la elección
-            'fecha_fin_solicitud' => $fechaFinSolicitud, // 24 horas después
-            'fecha_permiso' => now(), // Fecha actual
-            'estado' => 'entregado_con_retraso',
-            'codsis_sustituto' => null,
-            'fecha_comprobante_entregado' => null,
-            'tipo_usuario' => $tipoUsuario, // Agregar el tipo de usuario
-            // ... (otros campos según tus necesidades)
-        ]);
-
-        return response()->json(['message' => 'Permiso agregado correctamente', 'data' => $permiso], 201);
     }
 
-   
+
 
 public function procesarComprobanteEntregado(Request $request)
 {
@@ -168,5 +167,5 @@ public function verificarPermiso($codSis, $codComite)
 }
 
 
-   
+
 }

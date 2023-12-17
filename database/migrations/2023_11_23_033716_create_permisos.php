@@ -26,8 +26,6 @@ class CreatePermisos extends Migration
             $table->string('codsis_sustituto', 50)->nullable()->default(null);
             $table->tinyInteger('comprobante_entregado')->nullable()->default(null);
             $table->dateTime('fecha_comprobante_entregado')->nullable()->default(null);
-
-            $table->timestamps();
         });
     }
 

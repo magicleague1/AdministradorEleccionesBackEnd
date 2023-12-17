@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class PoblacionFacuCarr extends Model
 {
     protected $table = 'poblacion_facu_carr';
-    protected $primaryKey = ['codsis', 'cod_facultad', 'cod_carrera'];
+    //protected $primaryKey = ['codsis', 'cod_facultad', 'cod_carrera'];
     public $incrementing = false;
     public $timestamps = false;
 }

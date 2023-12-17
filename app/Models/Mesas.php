@@ -19,7 +19,11 @@ class Mesas extends Model
         'APELLIDOS_ESTUDIANTES',
     ];
 
- 
+    public function eleccion()
+    {
+        return $this->belongsTo(Elecciones::class, 'COD_ELECCION');
+    }
+
 
     // Si hay relaciones, se pueden definir aquí
     // Por ejemplo, relación con la tabla Elecciones, Facultad, Carrera, etc.

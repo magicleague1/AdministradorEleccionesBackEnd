@@ -15,6 +15,11 @@ use App\Http\Controllers\PublicarConvocatoriaController;
 use App\Http\Controllers\EleccionesFrenteController;
 use App\Http\Controllers\CandidatoController;
 use App\Http\Controllers\PermisoController;
+use App\Http\Controllers\ActaAperturaMesaController;
+use App\Http\Controllers\ListaVotantesController;
+use App\Http\Controllers\GenerarBoletasController;
+
+use App\Http\Controllers\JuradoController;
 
 // Otras rutas...
 
@@ -161,12 +166,13 @@ Route::get('/publicar_convocatoria_lista', [PublicarConvocatoriaController::clas
 
 Route::prefix('frentes')->group(function(){
     Route::get('/',[FrenteController::class, 'index'])->name('frentes');
-    Route::post('/nuevo/{COD_ELECCION}',[FrenteController::class, 'store'])->name('frente.store');
+    Route::post('/nuevo',[FrenteController::class, 'store']);
     Route::get('/{frente}',[FrenteController::class, 'show'])->name('frente.show');
     Route::put('/{frente}',[FrenteController::class, 'update'])->name('frente.update');
     Route::put('delete/{frente}',[FrenteController::class, 'delete'])->name('frente.delete');
     Route::get('/carrera/{COD_CARRERA}', [FrenteController::class, 'obtenerFrentesPorCarrera'])->name('frentes.carrera');
 });
+Route::get('/getFrentesByEleccion/{cod_eleccion}', [FrenteController::class, 'getFrentesByEleccion']);
 
 Route::get('/frentesyCandidatos', [FrenteController::class, 'listarFrentesYCandidatos'])->name('frente.candidatos');
 
@@ -183,7 +189,7 @@ Route::get('/elecciones_frente', [EleccionesFrenteController::class, 'index']);
 //eiditar asignacion de frentes
 
 Route::get('/eleccionesAsignadas/{idEleccion}', [EleccionesFrenteController::class, 'obtenerFrentesAsignados']);
-//Listar frentes 
+//Listar frentes
 Route::get('/obtener_frentes_por_eleccion/{idEleccion}', [EleccionesFrenteController::class, 'obtenerFrentesPorEleccion']);
 
 //para la funcion actulaizar eleecion frente  Jhonatan
@@ -309,7 +315,7 @@ Route::get('/elecciones_frente', [EleccionesFrenteController::class, 'index']);
 //eiditar asignacion de frentes
 
 Route::get('/eleccionesAsignadas/{idEleccion}', [EleccionesFrenteController::class, 'obtenerFrentesAsignados']);
-//Listar frentes 
+//Listar frentes
 Route::get('/obtener_frentes_por_eleccion/{idEleccion}', [EleccionesFrenteController::class, 'obtenerFrentesPorEleccion']);
 
 //para la funcion actulaizar eleecion frente  Jhonatan
@@ -325,3 +331,66 @@ Route::get('/buscarCarnet/{carnetIdentidad}', [CandidatoController::class, 'busc
 
 
 Route::post('/actualizarCandidato', [CandidatoController::class, 'actualizarCandidato']);
+
+
+//para generar la acta de apertura y cierre mesas
+
+//Route::post('/agregar_acta', [ActaAperturaMesaController::class, 'store']);
+
+
+Route::get('/generarPDFActaMesa/{cod_mesa}', [ActaAperturaMesaController::class, 'generarPDFActaMesa']);
+
+
+
+Route::get('/generarPDFActaCierreMesas/{cod_mesa}', [ActaAperturaMesaController::class, 'generarPDFActaCierreMesas']);
+
+
+//para generar la lista de estudiantes y docente para votar
+
+//
+Route::post('/generarListasVotantes/{codEleccion}', [ListaVotantesController::class, 'generarListasVotantes']);
+
+Route::get('/lista_votantes', [ListaVotantesController::class, 'index']);
+
+Route::post('/asignarListasVotantesPorRango', [ListaVotantesController::class, 'asignarListasVotantesPorRango']);
+
+
+//para generar la lista de estudiantes y docente para votar
+
+//
+Route::post('/generarListasVotantes/{codEleccion}', [ListaVotantesController::class, 'generarListasVotantes']);
+
+Route::get('/lista_votantes', [ListaVotantesController::class, 'index']);
+
+Route::post('/asignarListasVotantesPorRango', [ListaVotantesController::class, 'asignarListasVotantesPorRango']);
+
+
+//Route::get('/asignar_listas/{mesa}/{poblacion}', [ListaVotantesController::class, 'asignarListasVotantesPorRango']);
+Route::post('/listas_votantes_guardar', [ListaVotantesController::class, 'store']);
+
+
+Route::get('/generar-listas-votantes/{codEleccion}', [ListaVotantesController::class, 'obtenerRangoApellidos']);
+
+Route::get('/obtener_datos_lista_mesas/{codigoMesa}', [ListaVotantesController::class, 'obtenerDatosPorMesa']);
+
+Route::get('/obtenerDatosPorMesaYGenerarPDF/{codigoMesa}', [ListaVotantesController::class, 'obtenerDatosPorMesaYGenerarPDF']);
+
+//creacion de la parte de boletas
+Route::post('/generar_boletas/{idEleccion}', [GenerarBoletasController::class, 'generarBoletas']);
+Route::get('/generarBoletasPDF/{idEleccion}', [GenerarBoletasController::class, 'generarBoletasPDF']);
+
+
+//---------------------- Jurados--------------------------------------------
+Route::get('/jurado',[JuradoController::class,'index'] );
+//Route::post('mesa/{id}/jurado',[JuradoController::class,'store'] );
+Route::post('mesa/{cod_mesa}',[JuradoController::class,'store'] );
+Route::put('/jurado/{id}',[JuradoController::class,'update'] );
+Route::get('/obtenerJuradosPorMesa/{codMesa}', [JuradoController::class, 'obtenerJuradosPorMesa']);
+
+
+//-----------------------Candidato----------------------------------------------
+Route::put('/reasignarCandidato', [CandidatoController::class, 'reasignarCandidato']);
+
+Route::get('obtenerFrentesYCandidatos/{idEleccion}', [CandidatoController::class, 'obtenerFrentesYCandidatos']);
+
+

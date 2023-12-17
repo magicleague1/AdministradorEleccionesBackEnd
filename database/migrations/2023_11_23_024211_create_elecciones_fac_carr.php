@@ -17,8 +17,6 @@ class CreateEleccionesFacCarr extends Migration
             $table->unsignedBigInteger('COD_ELECCION')->nullable()->default(null);
             $table->unsignedBigInteger('COD_FACULTAD')->nullable()->default(null);
             $table->unsignedBigInteger('COD_CARRERA')->nullable()->default(null);
-
-            $table->timestamps();
         });
     }
 

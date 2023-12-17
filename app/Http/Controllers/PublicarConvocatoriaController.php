@@ -22,10 +22,10 @@ class PublicarConvocatoriaController extends Controller
     {
         $publicaciones = DB::table('publicar_convocatoria')
             ->join('convocatoria_elecciones', 'publicar_convocatoria.id_convocatoria', '=', 'convocatoria_elecciones.id_convocatoria')
-            ->join('eleccioness', 'convocatoria_elecciones.id_eleccion', '=', 'eleccioness.cod_eleccion')
+            ->join('elecciones', 'convocatoria_elecciones.id_eleccion', '=', 'elecciones.COD_ELECCION')
             ->select(
                 'publicar_convocatoria.fecha_publicacion',
-                'eleccioness.motivo_eleccion',
+                'elecciones.motivo_eleccion',
                 'publicar_convocatoria.titulo',
                 'convocatoria_elecciones.id_convocatoria'
             )
@@ -33,7 +33,6 @@ class PublicarConvocatoriaController extends Controller
 
         return response()->json($publicaciones);
     }
-
 
     public function store(Request $request)
     {

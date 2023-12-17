@@ -26,7 +26,7 @@ class PoblacionController extends Controller
         // Filtrar 6 docentes y 4 estudiantes de forma aleatoria en base al COD_COMITE
 
         $motivo = Elecciones::where('cod_eleccion', $COD_ELECCION)->value('motivo_eleccion');
-    
+
         $facultad_id = EleccionesFacCarr::where('cod_eleccion', $COD_ELECCION)->value('cod_facultad');
 
         $docentes = Poblacion::where('DOCENTE', 1)
@@ -52,7 +52,7 @@ class PoblacionController extends Controller
         ->get();
 
 
-        
+
         return response()->json(['data' => $docentes]);
         // Puedes agregar lógica adicional si es necesario
 
@@ -74,9 +74,13 @@ class PoblacionController extends Controller
             ->limit(4)
             ->get();
 
+
+
         // Dividir los docentes y estudiantes en dos arrays (3 docentes y 2 estudiantes en cada uno)
         $array1 = $docentes->take(3)->concat($estudiantes->take(2));
         $array2 = $docentes->skip(3)->concat($estudiantes->skip(2));
+
+
 
         // Asignar codTitular_Suplente = 1 a los elementos de $array1
         foreach ($array1 as $element) {
@@ -85,6 +89,8 @@ class PoblacionController extends Controller
                 'COD_COMITE' => $COD_COMITE,
                 'COD_TITULAR_SUPLENTE' => "1"
             ]);
+
+            //return response()->json($element);
         }
 
         // Asignar codTitular_Suplente = 2 a los elementos de $array2
@@ -95,6 +101,8 @@ class PoblacionController extends Controller
                 'COD_TITULAR_SUPLENTE' => "2"
             ]);
         }
+
+
 
         // Puedes agregar lógica adicional si es necesario
 

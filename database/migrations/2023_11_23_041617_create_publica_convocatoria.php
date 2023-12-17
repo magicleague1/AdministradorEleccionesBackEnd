@@ -19,8 +19,6 @@ class CreatePublicaConvocatoria extends Migration
             $table->date('fecha_publicacion')->nullable()->default(null);
             $table->string('titulo', 255)->nullable()->default(null);
             $table->text('contenido')->nullable()->default(null);
-
-            $table->timestamps();
         });
     }
 

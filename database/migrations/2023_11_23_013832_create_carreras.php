@@ -18,8 +18,6 @@ class CreateCarreras extends Migration
             $table->unsignedBigInteger('COD_FACULTAD');
             $table->string('NOMBRE_CARRERA', 50);
             $table->text('DESCRIPCION')->nullable();
-
-            $table->timestamps();
         });
     }
 
