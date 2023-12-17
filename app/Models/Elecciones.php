@@ -34,4 +34,9 @@ class Elecciones extends Model
     {
         return $this->hasManyThrough(Jurado::class, Mesas::class,'COD_ELECCION','COD_MESA');
     }
+
+    public function titularesSuplentes()
+    {
+        return $this->hasMany(AsociarTitularSuplente::class, 'COD_COMITE', 'COD_COMITE');
+    }
 }

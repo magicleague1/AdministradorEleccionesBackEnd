@@ -10,8 +10,8 @@ use App\Models\Poblacion;
 use App\Models\AsociarTitularSuplente;
 use App\Models\EleccionesFacCarr;
 use Illuminate\Support\Facades\DB;
-
 use App\Notifications\NotificacionModelo;
+use Illuminate\Support\Facades\Notification;
 
 
 class ComiteElectoralController extends Controller

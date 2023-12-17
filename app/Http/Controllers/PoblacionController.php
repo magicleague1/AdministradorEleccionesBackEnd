@@ -9,8 +9,7 @@ use App\Models\Elecciones;
 use App\Models\EleccionesFacCarr;
 use Illuminate\Support\Facades\DB;
 
-use App\Notifications\NotificacionModelo;
-use Illuminate\Support\Facades\Notification;
+
 
 class PoblacionController extends Controller
 {
@@ -95,7 +94,7 @@ class PoblacionController extends Controller
 
             //return response()->json($element);
 
-            $this->enviarMensajeMiembroComite($element, 'Titular');
+            //$this->enviarMensajeMiembroComite($element, 'Titular');
         }
 
         // Asignar codTitular_Suplente = 2 a los elementos de $array2
@@ -106,7 +105,7 @@ class PoblacionController extends Controller
                 'COD_TITULAR_SUPLENTE' => "2"
             ]);
 
-            $this->enviarMensajeMiembroComite($element, 'Suplente');
+            //$this->enviarMensajeMiembroComite($element, 'Suplente');
         }
 
 
@@ -116,7 +115,7 @@ class PoblacionController extends Controller
         return response()->json(['message' => 'Datos registrados en la tabla asociar_titularSuplente']);
     }
 
-    public function enviarMensajeMiembroComite($miembro, $cargo){
+    /*public function enviarMensajeMiembroComite($miembro, $cargo){
         $eleccion = Elecciones::where('COD_COMITE', $miembro->COD_COMITE)->first();
 
         $mensaje = "TRIBUNAL ELECTORAL UNIVERSITARIO informa: \n"
@@ -126,5 +125,5 @@ class PoblacionController extends Controller
         . "Que se llevará a cabo el día: {$eleccion->fecha_eleccion}.";
 
         Notification::send($miembro, new NotificacionModelo($mensaje));
-    }
+    }*/
 }

@@ -36,9 +36,9 @@ class Poblacion extends Model
  
     }
 
-    public function tribunalElectoralUniversitario(){
+    /*public function tribunalElectoralUniversitario(){
         return $this->belongsTo(TribunalElectoralUniversitario::class, 'COD_TEU');
-    }
+    }*/
 
     public function carrera(){
         return $this->belongsTo(Carrera::class, 'COD_CARRERA');
@@ -54,5 +54,10 @@ class Poblacion extends Model
 
     public function candidato(){
         return $this->hasOne(Candidato::class, 'COD_CANDIDATO');
+    }
+
+    public function titularesSuplentes()
+    {
+        return $this->hasMany(AsociarTitularSuplente::class, 'COD_SIS', 'CODSIS');
     }
 }
