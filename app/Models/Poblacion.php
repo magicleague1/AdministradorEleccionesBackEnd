@@ -5,10 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Notifications\Notifiable;
 
 class Poblacion extends Model
 {
-    use HasFactory;
+    use HasFactory,Notifiable;
     public $incrementing = false;
     protected $keyType = '';
     public $timestamps = false;
@@ -22,14 +23,22 @@ class Poblacion extends Model
         'CARNETIDENTIDAD',
         'APELLIDOS',
         'ESTUDIANTE',
-        'DOCENTE'
+        'DOCENTE',
+        'EMAIL'
     ];
 
     protected $guarded = [];
 
-    public function tribunalElectoralUniversitario(){
-        return $this->belongsTo(TribunalElectoralUniversitario::class, 'COD_TEU');
+    public function routeNotificationForMail($notification)
+    {
+    
+        return $this->EMAIL;
+ 
     }
+
+    /*public function tribunalElectoralUniversitario(){
+        return $this->belongsTo(TribunalElectoralUniversitario::class, 'COD_TEU');
+    }*/
 
     public function carrera(){
         return $this->belongsTo(Carrera::class, 'COD_CARRERA');
@@ -46,4 +55,9 @@ class Poblacion extends Model
     public function candidato(){
         return $this->hasOne(Candidato::class, 'COD_CANDIDATO');
     }
+
+    public function titularesSuplentes()
+    {
+        return $this->hasMany(AsociarTitularSuplente::class, 'COD_SIS', 'CODSIS');
+}
 }

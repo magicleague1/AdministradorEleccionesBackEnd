@@ -9,6 +9,10 @@ use App\Models\Eleccion;
 use App\Models\AsociarTitularSuplente;
 use Illuminate\Support\Facades\DB;
 
+use App\Models\Elecciones;
+use App\Notifications\NotificacionModelo;
+use Illuminate\Support\Facades\Notification;
+
 class AsociarTitularSuplenteController extends Controller
 {
     public function store(Request $request)
@@ -71,8 +75,6 @@ class AsociarTitularSuplenteController extends Controller
     return response()->json(['existeComite' => $existeComite]);
 }
 
-
-
 public function verListaComiteConID($idComite)
 {
     // Obtener información de titulares
@@ -113,7 +115,39 @@ public function verListaComiteConID($idComite)
     return response()->json(['titulares' => $titulares, 'suplentes' => $suplentes]);
 }
 
+//Envio de correos
+public function enviarNotificacion($codComite)
+    {
+        $eleccion = Elecciones::where('COD_COMITE', $codComite)->first();
 
+        // Obtener titulares y suplentes
+        $titulares = $eleccion->titularesSuplentes()->where('COD_TITULAR_SUPLENTE', '1')->get();
+        $suplentes = $eleccion->titularesSuplentes()->where('COD_TITULAR_SUPLENTE', '2')->get();
+
+        foreach ($titulares as $titular) {
+            $this->enviarMensajeMiembroComite($titular->poblacion, 'Titular', $codComite, $eleccion);
+        }
+
+        foreach ($suplentes as $suplente) {
+            $this->enviarMensajeMiembroComite($suplente->poblacion, 'Suplente', $codComite, $eleccion);
+        }
+
+        return response()->json(['message' => 'Se ha notificado a los miembros del comité electoral.']);
+    }
+
+    private function enviarMensajeMiembroComite($miembro, $cargo, $codComite, $eleccion)
+    {
+        $mensaje = "TRIBUNAL ELECTORAL UNIVERSITARIO informa: \n"
+            . "Usted ha sido elegido como miembro de comité electoral\n"
+            . "Como $cargo. \n"
+            . "Para el proceso electoral con motivo de la elección de: {$eleccion->MOTIVO_ELECCION}. \n"
+            . "Que se llevará a cabo el día: {$eleccion->FECHA_ELECCION}.";
+
+        Notification::send($miembro, new NotificacionModelo($mensaje));
+}
+
+
+////
 public function actualizarDatos(Request $request)
 {
 
@@ -185,3 +219,4 @@ if ($permiso == null) {
 
 
 }
+

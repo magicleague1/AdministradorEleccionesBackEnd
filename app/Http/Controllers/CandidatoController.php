@@ -53,6 +53,15 @@ class CandidatoController extends Controller
     return response()->json($carnetExiste);
 }
 
+public function verificarExistenciaCandidato(Request $request)
+{
+    $carnetIdentidad = $request->get('carnetIdentidad');
+
+    $existeCandidato = Candidato::where('COD_CARNETIDENTIDAD', $carnetIdentidad)
+        ->exists();
+
+    return response()->json(['existeCandidato' => $existeCandidato]);
+}
 
 public function actualizarCandidato(Request $request)
 {

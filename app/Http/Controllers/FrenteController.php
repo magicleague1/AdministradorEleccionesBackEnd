@@ -29,17 +29,30 @@ class FrenteController extends Controller
         $nombreLogo = "null";
 
         try {
+
+            $nombreFrenteSolicitado = $request->input('NOMBRE_FRENTE');
+
+           
+            $codEleccionSolicitado = $request->input('COD_ELECCION');
+
+            $existeFrente = Frente::where('NOMBRE_FRENTE', $nombreFrenteSolicitado)
+                ->where('COD_ELECCION', $codEleccionSolicitado)
+                ->exists();
+
+            if ($existeFrente) {
+                return response()->json(['error' => 'El frente ya está registrado para esta elección.'], 400);
+            }
             // Intenta crear y guardar el frente político
             $frente = new Frente();
             $frente->NOMBRE_FRENTE = $request->NOMBRE_FRENTE;
             $frente->SIGLA_FRENTE = $request->SIGLA_FRENTE;
+            $frente->COD_ELECCION = $request->COD_ELECCION;
             $frente->FECHA_INSCRIPCION = now();
             $frente->LOGO = $nombreLogo;
             $frente->save();
 
             // Obtiene el ID del frente político recién creado
             $idFrente = $frente->getKey();
-
             // Llama a la función para guardar la relación con elecciones
             $eleccionesFrenteController = new EleccionesFrenteController();
             $eleccionesFrenteController->guardarRelacionEleccionesFrente($request->COD_ELECCION, $idFrente);

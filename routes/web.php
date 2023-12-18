@@ -18,7 +18,6 @@ use App\Http\Controllers\PermisoController;
 use App\Http\Controllers\ActaAperturaMesaController;
 use App\Http\Controllers\ListaVotantesController;
 use App\Http\Controllers\GenerarBoletasController;
-
 use App\Http\Controllers\JuradoController;
 
 // Otras rutas...
@@ -92,7 +91,7 @@ Route::post('/elecciones_fac_carr', [EleccionesFacCarrController::class, 'store'
 
 
 Route::post('/asignar_mesas_carrera/{cod_eleccion}', [MesasController::class, 'asignarMesasPorCarrera']);
-
+Route::get('/verificar-mesas/{cod_eleccion}', [MesasController::class, 'verificarExistenciaMesa']);
 
 
 Route::get('/mesas_asignadas', [MesasController::class, 'listarMesasAsignadas']);
@@ -178,7 +177,7 @@ Route::get('/frentesyCandidatos', [FrenteController::class, 'listarFrentesYCandi
 
 //Asignar Candidatos al frente
 Route::post('frentes/asignarCandidatos', [CandidatoController::class, 'asignarCandidatoAFrente']);
-
+Route::get('candidatos/verificarExistencia', [CandidatoController::class, 'verificarExistenciaCandidato']);
 //Asignar Frente a Proceso electoral
 Route::post('frentes/asignarFrenteAEleccion', [EleccionesController::class, 'asignarFrente']);
 
@@ -378,7 +377,7 @@ Route::get('/obtenerDatosPorMesaYGenerarPDF/{codigoMesa}', [ListaVotantesControl
 //creacion de la parte de boletas
 Route::post('/generar_boletas/{idEleccion}', [GenerarBoletasController::class, 'generarBoletas']);
 Route::get('/generarBoletasPDF/{idEleccion}', [GenerarBoletasController::class, 'generarBoletasPDF']);
-
+Route::get('/verificar-boletas/{codEleccion}', [GenerarBoletasController::class, 'verificarExistenciaBoletaPorEleccion']);
 
 //---------------------- Jurados--------------------------------------------
 Route::get('/jurado',[JuradoController::class,'index'] );
@@ -387,6 +386,8 @@ Route::post('mesa/{cod_mesa}',[JuradoController::class,'store'] );
 Route::put('/jurado/{id}',[JuradoController::class,'update'] );
 Route::get('/obtenerJuradosPorMesa/{codMesa}', [JuradoController::class, 'obtenerJuradosPorMesa']);
 
+//-----------------Comite---------------------------------------
+Route::post('/mensajeComiteElectoral/{codComite}',[App\Http\Controllers\AsociarTitularSuplenteController::class,'enviarNotificacion']);
 
 //-----------------------Candidato----------------------------------------------
 Route::put('/reasignarCandidato', [CandidatoController::class, 'reasignarCandidato']);

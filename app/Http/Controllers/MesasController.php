@@ -134,6 +134,14 @@ class MesasController extends Controller
 }
 
 
+public function verificarExistenciaMesaPorEleccion($codEleccion)
+{
+    // Utiliza el modelo 'Mesa' para realizar la consulta
+    $existeMesa = Mesa::where('COD_ELECCION', $codEleccion)->exists();
+
+    return response()->json(['existeMesa' => $existeMesa]);
+}
+
 
     public function asignarMesasPorCarrera0502($cod_eleccion)
 {

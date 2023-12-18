@@ -21,4 +21,9 @@ class AsociarTitularSuplente extends Model
         'COD_TITULAR_SUPLENTE',
     ];
 
+    public function poblacion()
+    {
+        return $this->belongsTo(Poblacion::class, 'COD_SIS', 'CODSIS');
+    }
+
 }

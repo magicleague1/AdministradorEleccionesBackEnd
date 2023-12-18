@@ -54,7 +54,13 @@ class GenerarBoletasController extends Controller
             }
         }
     }
+    public function verificarExistenciaBoletaPorEleccion($codEleccion)
+    {
+    // Utiliza el modelo 'Boleta' para realizar la consulta
+    $existeBoleta = Boleta::where('COD_ELECCION', $codEleccion)->exists();
 
+    return response()->json(['existeBoleta' => $existeBoleta]);
+    }
 
     public function generarPDF($idEleccion)
     {
@@ -225,3 +231,4 @@ class GenerarBoletasController extends Controller
 
 
 }
+

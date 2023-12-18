@@ -9,6 +9,7 @@ use App\Models\Mesas;
 use App\Models\Jurado;
 use App\Notifications\NotificacionModelo;
 
+
 class JuradoController extends Controller
 {
     /**
@@ -23,16 +24,15 @@ class JuradoController extends Controller
         return response()->json(['data' => $jurados]);
     }
 
-
     public function store(Request $request, $cod_mesa)
-    {
+    {   
         $poblacion = Poblacion::all();
         $mesa=Mesas::find($cod_mesa)->NUM_MESA;
-
+    
         [$docentes, $estudiantes] = $poblacion->partition(function ($usuario) {
         return $usuario->DOCENTE;
         });
-
+        
         //para presidente de mesa
         $presidenteMesa = $docentes->random();
         $this->crearJurado($presidenteMesa, $cod_mesa, "PRESIDENTE DE MESA", $mesa);
@@ -66,8 +66,7 @@ class JuradoController extends Controller
         }
 
         return response()->json(['message' => 'Datos registrados en la tabla Jurados']);
-    }
-
+}
 
     private function crearJurado($persona, $cod_mesa, $cargo)
 {
