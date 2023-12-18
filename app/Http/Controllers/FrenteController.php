@@ -195,6 +195,7 @@ class FrenteController extends Controller
 
     public function listarFrentesYCandidatos()
     {
+
         $frentes = Frente::with(['candidato', 'candidato.CARGO_POSTULADO'])->get();
 
         return response()->json(['frentes' => $frentes]);
